@@ -18,10 +18,9 @@ end
 -- @param amount
 --  The amount of the agent needed
 function ProcessOrganelle:addRecipyInput(agentId, amount)
-{
     self.inputAgents[agentId] = amount
     self.buffers[agentId] = 0
-}
+end
 
 -- Add output agent to the recipy of the organelle
 --
@@ -31,9 +30,8 @@ function ProcessOrganelle:addRecipyInput(agentId, amount)
 -- @param amount
 --  The amount of the agent produced
 function ProcessOrganelle:addRecipyOutput(agentId, amount)
-{
     self.outputAgents[agent] = amount 
-}
+end
 
 -- Store agent in buffer of processing organelle
 --
@@ -43,9 +41,16 @@ function ProcessOrganelle:addRecipyOutput(agentId, amount)
 -- @param amount
 --  The amount to be stored
 function ProcessOrganelle:storeAgent(agentId, amount)
-{
     self.buffers[agentId] += amount
-}
+end
+
+-- Checks if processing organelle has a given agent as an input
+--
+-- @param agentId
+--  The agent to check for
+function ProcessOrganelle:hasInputAgent(agentId)
+    return inputAgents[agentid] ~= nil
+end
 
 -- Called by Microbe:update
 --
@@ -71,7 +76,6 @@ function ProcessOrganelle:update(microbe, milliseconds)
     for agentId,amount in pairs(self.outputAgents) do 
         microbe:storeAgent(agentId, amount)
     end
-    
 end
 
 -- Buffer amounts aren't stored, could be added fairly easily
