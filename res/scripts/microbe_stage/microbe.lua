@@ -10,6 +10,7 @@ function MicrobeComponent:__init()
     Component.__init(self)
     self.organelles = {}
     self.vacuoles = {}
+    self.producerOrganelles = {}
     self.movementDirection = Vector3(0, 0, 0)
     self.facingTargetPoint = Vector3(0, 0, 0)
     self.initialized = false
@@ -311,9 +312,23 @@ end
 function Microbe:update(milliseconds)
     -- Vacuoles
     for agentId, vacuoleList in pairs(self.microbe.vacuoles) do
+        -- Check for agents to store
         local amount = self.agentAbsorber:absorbedAgentAmount(agentId)
         if amount > 0.0 then
             self:storeAgent(agentId, amount)
+        end
+        -- Distribute agents to StorageOrganelles
+        if self:getAgentAmount(agentId) > 0 then
+            local candidateIndices = {}
+            for i, producer in ipairs(self.microbe.producerOrganelles) do    
+                if producer:hasInputAgent(agentId) then        
+                    candidateIndices[#candidateIndices+1] = i
+                end
+            end
+            if #candidateIndices > 0 then
+                local chosenProducer = self.microbe.producerOrganelles[candidateIndices[math.random(1,#candidateIndices)]] -- TODO: Replace math.random with call to C++ RNGManger
+                chosenProducer:storeAgent(agentId, self:takeAgent(agentId, 1))
+            end
         end
     end
     -- Other organelles
