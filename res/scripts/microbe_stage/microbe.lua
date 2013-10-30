@@ -171,6 +171,15 @@ function Microbe:addVacuole(vacuole)
 end
 
 
+-- Adds a process organelle
+--
+-- @param processOrganelle
+--  An object of type ProcessOrganelle
+function Microbe:addProcessOrganelle(processOrganelle)
+    self.microbe.producerOrganelles[#producerOrganelles+1] = processOrganelle
+end
+
+
 -- Queries the currently stored amount of an agent
 --
 -- @param agentId

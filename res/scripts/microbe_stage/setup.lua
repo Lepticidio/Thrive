@@ -43,6 +43,7 @@ local function setupAgents()
     AgentRegistry.registerAgentType("oxygen", "Oxygen")    
     AgentRegistry.registerAgentType("nitrate", "Nitrate")
     AgentRegistry.registerAgentType("faxekondium", "Faxekondium")
+    AgentRegistry.registerAgentType("oxytoxy", "OxyToxy NT")
 end
 
 local function setupEmitter()
@@ -185,18 +186,20 @@ local function setupPlayer()
     -- Storage agent 2
     local storageOrganelle2 = StorageOrganelle(AgentRegistry.getAgentId("oxygen"), 100.0)
     storageOrganelle2:addHex(0, 0)
-    storageOrganelle2:setColour(ColourValue(0, 1, 1, 1))
+    storageOrganelle2:setColour(ColourValue(0, 1, 0.5, 1))
     player:addOrganelle(0, -1, storageOrganelle2)
     -- Storage agent 3
-    local storageOrganelle3 = StorageOrganelle(AgentRegistry.getAgentId("faxekondium"), 100.0)
+    local storageOrganelle3 = StorageOrganelle(AgentRegistry.getAgentId("oxytoxy"), 100.0)
     storageOrganelle3:addHex(0, 0)
-    storageOrganelle3:setColour(ColourValue(1, 1, 0, 1))
+    storageOrganelle3:setColour(ColourValue(0.5, 1, 0, 1))
     player:addOrganelle(-1, 0, storageOrganelle3)
-    -- Storage agent 4
-    local storageOrganelle4 = StorageOrganelle(AgentRegistry.getAgentId("nitrate"), 100.0)
-    storageOrganelle4:addHex(0, 0)
-    storageOrganelle4:setColour(ColourValue(1, 0, 1, 0))
-    player:addOrganelle(1, -1, storageOrganelle4)
+    -- Producer making Oxytoxy-neurotoxin from oxygen
+    local processOrganelle1 = ProcessOrganelle()
+    processOrganelle1:addRecipyInput(AgentRegistry.getAgentId("oxygen"), 10)
+    processOrganelle1:addRecipyOutput(AgentRegistry.getAgentId("oxytoxy"), 1)
+    processOrganelle1:addHex(0, 0)
+    processOrganelle1:setColour(ColourValue(1, 0, 1, 0))
+    player:addOrganelle(1, -1, processOrganelle1)
 end
 
 setupBackground()

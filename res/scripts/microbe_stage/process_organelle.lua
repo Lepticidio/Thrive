@@ -4,11 +4,19 @@
 class 'ProcessOrganelle' (Organelle)
 
 -- Constructor
-function ProcessOrganelle:__init()
+function ProcessOrganelle:__init(a)
     self.buffers = {}
     self.inputAgents = {}
     self.outputAgents = {}
 end
+
+
+-- Overridded from Organelle:onAddedToMicrobe
+function ProcessOrganelle:onAddedToMicrobe(microbe, q, r)
+    Organelle.onAddedToMicrobe(self, microbe, q, r)
+    microbe:addProcessOrganelle(self)
+end
+
 
 -- Add input agent to the recipy of the organelle
 --
@@ -22,6 +30,7 @@ function ProcessOrganelle:addRecipyInput(agentId, amount)
     self.buffers[agentId] = 0
 end
 
+
 -- Add output agent to the recipy of the organelle
 --
 -- @param agentId
@@ -33,6 +42,7 @@ function ProcessOrganelle:addRecipyOutput(agentId, amount)
     self.outputAgents[agent] = amount 
 end
 
+
 -- Store agent in buffer of processing organelle
 --
 -- @param agentId
@@ -41,8 +51,9 @@ end
 -- @param amount
 --  The amount to be stored
 function ProcessOrganelle:storeAgent(agentId, amount)
-    self.buffers[agentId] += amount
+    self.buffers[agentId] = self.buffers[agentId] + amount
 end
+
 
 -- Checks if processing organelle has a given agent as an input
 --
@@ -51,6 +62,7 @@ end
 function ProcessOrganelle:hasInputAgent(agentId)
     return inputAgents[agentid] ~= nil
 end
+
 
 -- Called by Microbe:update
 --
@@ -78,6 +90,7 @@ function ProcessOrganelle:update(microbe, milliseconds)
     end
 end
 
+
 -- Buffer amounts aren't stored, could be added fairly easily
 function ProcessOrganelle:storage()
     local storage = Organelle.storage(self)
@@ -99,6 +112,7 @@ function ProcessOrganelle:storage()
     storage:set("outputAgents", outputAgentsSt)
     return storage
 end
+
 
 function Organelle:load(storage)
     Organelle.load(self, storage)
