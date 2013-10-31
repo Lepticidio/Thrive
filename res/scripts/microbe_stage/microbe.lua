@@ -176,7 +176,7 @@ end
 -- @param processOrganelle
 --  An object of type ProcessOrganelle
 function Microbe:addProcessOrganelle(processOrganelle)
-    self.microbe.producerOrganelles[#producerOrganelles+1] = processOrganelle
+    table.insert(self.microbe.producerOrganelles, processOrganelle)
 end
 
 
@@ -331,7 +331,7 @@ function Microbe:update(milliseconds)
             local candidateIndices = {}
             for i, producer in ipairs(self.microbe.producerOrganelles) do    
                 if producer:hasInputAgent(agentId) then        
-                    candidateIndices[#candidateIndices+1] = i
+                    table.insert(candidateIndices, i)
                 end
             end
             if #candidateIndices > 0 then

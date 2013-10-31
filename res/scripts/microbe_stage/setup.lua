@@ -195,7 +195,7 @@ local function setupPlayer()
     player:addOrganelle(-1, 0, storageOrganelle3)
     -- Producer making Oxytoxy-neurotoxin from oxygen
     local processOrganelle1 = ProcessOrganelle()
-    processOrganelle1:addRecipyInput(AgentRegistry.getAgentId("oxygen"), 10)
+    processOrganelle1:addRecipyInput(AgentRegistry.getAgentId("oxygen"), 2)
     processOrganelle1:addRecipyOutput(AgentRegistry.getAgentId("oxytoxy"), 1)
     processOrganelle1:addHex(0, 0)
     processOrganelle1:setColour(ColourValue(1, 0, 1, 0))
