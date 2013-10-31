@@ -5,6 +5,7 @@ class 'ProcessOrganelle' (Organelle)
 
 -- Constructor
 function ProcessOrganelle:__init()
+    Organelle.__init(self)
     self.buffers = {}
     self.inputAgents = {}
     self.outputAgents = {}
@@ -39,7 +40,7 @@ end
 -- @param amount
 --  The amount of the agent produced
 function ProcessOrganelle:addRecipyOutput(agentId, amount)
-    self.outputAgents[agent] = amount 
+    self.outputAgents[agentId] = amount 
 end
 
 
@@ -60,7 +61,7 @@ end
 -- @param agentId
 --  The agent to check for
 function ProcessOrganelle:hasInputAgent(agentId)
-    return inputAgents[agentid] ~= nil
+    return self.inputAgents[agentId] ~= nil
 end
 
 
@@ -74,7 +75,7 @@ end
 -- @param milliseconds
 --  The time since the last call to update()
 function ProcessOrganelle:update(microbe, milliseconds)
-    Organelle:update(microbe, milliseconds)
+    Organelle.update(self, microbe, milliseconds)
     -- Attempt to produce
     for agentId,amount in pairs(self.inputAgents) do 
         if self.buffers[agentId] < self.inputAgents[agentId] then
@@ -83,7 +84,7 @@ function ProcessOrganelle:update(microbe, milliseconds)
     end
     -- Sufficient agent material is available for production
     for agentId,amount in pairs(self.inputAgents) do 
-        self.buffers[agentId] -= amount
+        self.buffers[agentId] = self.buffers[agentId] - amount
     end
     for agentId,amount in pairs(self.outputAgents) do 
         microbe:storeAgent(agentId, amount)
@@ -114,7 +115,7 @@ function ProcessOrganelle:storage()
 end
 
 
-function Organelle:load(storage)
+function ProcessOrganelle:load(storage)
     Organelle.load(self, storage)
     local inputAgentsSt = storage:get("inputAgents", {})
     for i = 1,inputAgentsSt:size() do
