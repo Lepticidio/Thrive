@@ -331,9 +331,7 @@ function Microbe:update(milliseconds)
             local candidateIndices = {}
             for i, producer in ipairs(self.microbe.producerOrganelles) do    
                 if producer:hasInputAgent(agentId) then   
-                    print("debug 3")
                     table.insert(candidateIndices, i)
-                     print("number of candidates: " .. #candidateIndices)
                 end
             end
             if #candidateIndices > 0 then
