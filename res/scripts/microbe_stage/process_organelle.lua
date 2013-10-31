@@ -124,8 +124,8 @@ function ProcessOrganelle:load(storage)
     end
     local outputAgentsSt = storage:get("outputAgents", {})
     for i = 1,outputAgentsSt:size() do
-        local inputStorage = outputAgentsSt:get(i)
-        self:addRecipyOutput(outputAgentsSt:get("agentId", 0), outputAgentsSt:get("amount", 0))
+        local outputStorage = outputAgentsSt:get(i)
+        self:addRecipyOutput(outputStorage:get("agentId", 0), outputStorage:get("amount", 0))
     end
 end
 
