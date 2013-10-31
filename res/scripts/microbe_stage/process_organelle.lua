@@ -4,7 +4,7 @@
 class 'ProcessOrganelle' (Organelle)
 
 -- Constructor
-function ProcessOrganelle:__init(a)
+function ProcessOrganelle:__init()
     self.buffers = {}
     self.inputAgents = {}
     self.outputAgents = {}
