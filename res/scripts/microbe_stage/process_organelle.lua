@@ -127,14 +127,14 @@ function ProcessOrganelle:storage()
         inputAgentsSt:append(inputStorage)
     end
     storage:set("inputAgents", inputAgentsSt)
-    outputAgentsSt = StorageList()
+    local outputAgentsSt = StorageList()
     for agentId, amount in pairs(self.outputAgents) do
         outputStorage = StorageContainer()
         outputStorage:set("agentId", agentId)
         outputStorage:set("amount", amount)
         outputAgentsSt:append(outputStorage)
     end
-    local storage:set("outputAgents", outputAgentsSt)
+    storage:set("outputAgents", outputAgentsSt)
     return storage
 end
 
