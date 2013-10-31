@@ -106,6 +106,7 @@ Microbe.COMPONENTS = {
 --  The entity this microbe wraps
 function Microbe:__init(entity)
     self.entity = entity
+    self.residuePhysicsTime = 0
     for key, typeId in pairs(Microbe.COMPONENTS) do
         local component = entity:getComponent(typeId)
         assert(component ~= nil, "Can't create microbe from this entity, it's missing " .. key)
@@ -328,18 +329,23 @@ function Microbe:update(milliseconds)
             self:storeAgent(agentId, amount)
         end
         -- Distribute agents to StorageOrganelles
-        if self:getAgentAmount(agentId) > 0 then
-            local candidateIndices = {}
-            for i, processOrg in ipairs(self.microbe.processOrganelles) do  
-                if processOrg:wantsInputAgent(agentId) then   
-                    table.insert(candidateIndices, i)
+        self.residuePhysicsTime = self.residuePhysicsTime + milliseconds
+        while (self.residuePhysicsTime > 100)
+        {
+            if self:getAgentAmount(agentId) > 0 then
+                local candidateIndices = {}
+                for i, processOrg in ipairs(self.microbe.processOrganelles) do  
+                    if processOrg:wantsInputAgent(agentId) then   
+                        table.insert(candidateIndices, i)
+                    end
+                end
+                if #candidateIndices > 0 then
+                    local chosenProcessOrg = self.microbe.processOrganelles[candidateIndices[math.random(1,#candidateIndices)]] -- TODO: Replace math.random with call to C++ RNGManger
+                    chosenProcessOrg:storeAgent(agentId, self:takeAgent(agentId, 1))
                 end
             end
-            if #candidateIndices > 0 then
-                local chosenProcessOrg = self.microbe.processOrganelles[candidateIndices[math.random(1,#candidateIndices)]] -- TODO: Replace math.random with call to C++ RNGManger
-                chosenProcessOrg:storeAgent(agentId, self:takeAgent(agentId, 1))
-            end
-        end
+            self.residuePhysicsTime = self.residuePhysicsTime - 100
+        }
     end
     -- Other organelles
     for _, organelle in pairs(self.microbe.organelles) do
