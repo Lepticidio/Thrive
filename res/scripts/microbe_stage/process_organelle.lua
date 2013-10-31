@@ -4,10 +4,13 @@
 class 'ProcessOrganelle' (Organelle)
 
 -- Constructor
-function ProcessOrganelle:__init(timeBetweenProcess)
+function ProcessOrganelle:__init(processCooldown)
     Organelle.__init(self)
-    self.timeBetweenProcess = timeBetweenProcess
-    self.processCooldown = 0
+    self.processCooldown = processCooldown
+    self.remainingCooldown = 0 -- Countdown var until next output batch can be produced
+    self.bufferSum = 0         -- Number of agent units summed over all buffers
+    self.inputSum = 0          -- Number of agent units summed over all input requirements
+    self.originalColour = ColourValue(1,1,1,1)
     self.buffers = {}
     self.inputAgents = {}
     self.outputAgents = {}
@@ -25,8 +28,8 @@ end
 -- 
 -- @param milliseconds
 --  The amount of time
-function ProcessOrganelle:setTimeBetweenProcess(milliseconds)
-    self.timeBetweenProcess = milliseconds
+function ProcessOrganelle:setprocessCooldown(milliseconds)
+    self.processCooldown = milliseconds
 end
 
 
@@ -40,6 +43,8 @@ end
 function ProcessOrganelle:addRecipyInput(agentId, amount)
     self.inputAgents[agentId] = amount
     self.buffers[agentId] = 0
+    self.inputSum = self.inputSum + amount;
+    self:updateColourDynamic()
 end
 
 
@@ -66,6 +71,18 @@ end
 --  The amount to be stored
 function ProcessOrganelle:storeAgent(agentId, amount)
     self.buffers[agentId] = self.buffers[agentId] + amount
+    self.bufferSum = self.bufferSum + amount
+    self:updateColourDynamic()
+    self._needsColourUpdate = true
+end
+
+
+-- Private function used to update colour of organelle based on how full it is
+function ProcessOrganelle:updateColourDynamic()
+    local rt = self.bufferSum/self.inputSum -- Ratio: how close to required input
+    print(rt .. " " .. self.bufferSum .. " " .. self.inputSum)
+    if rt > 1 then rt = 1 end
+    self._colour = ColourValue(0.6 + (self.originalColour.r-0.6)*rt, 0.6 + (self.originalColour.g-0.6)*rt,                              0.6 + (self.originalColour.b-0.6)*rt, 1)     -- Calculate colour relative to how close the organelle is to have enough input agents to produce
 end
 
 
@@ -79,7 +96,7 @@ end
 --  true if the agent wants the agent, false if it can't use or doesn't want the agent
 function ProcessOrganelle:wantsInputAgent(agentId)
     return (self.inputAgents[agentId] ~= nil and 
-          self.processCooldown / (self.inputAgents[agentId] - self.buffers[agentId]) < (self.timeBetweenProcess / self.inputAgents[agentId])) -- calculate if it has enough buffered relative the amount of time left.
+          self.remainingCooldown / (self.inputAgents[agentId] - self.buffers[agentId]) < (self.processCooldown / self.inputAgents[agentId])) -- calculate if it has enough buffered relative the amount of time left.
 end
 
 
@@ -94,9 +111,9 @@ end
 --  The time since the last call to update()
 function ProcessOrganelle:update(microbe, milliseconds)
     Organelle.update(self, microbe, milliseconds)
-    self.processCooldown = self.processCooldown - milliseconds
-    if self.processCooldown < 0 then self.processCooldown = 0 end
-    if self.processCooldown == 0 then
+    self.remainingCooldown = self.remainingCooldown - milliseconds
+    if self.remainingCooldown < 0 then self.remainingCooldown = 0 end
+    if self.remainingCooldown == 0 then
         -- Attempt to produce
         for agentId,amount in pairs(self.inputAgents) do 
             if self.buffers[agentId] < self.inputAgents[agentId] then
@@ -104,21 +121,34 @@ function ProcessOrganelle:update(microbe, milliseconds)
             end
         end
         -- Sufficient agent material is available for production
-        self.processCooldown = self.timeBetweenProcess
+        self.remainingCooldown = self.processCooldown
+        self._needsColourUpdate = true
         for agentId,amount in pairs(self.inputAgents) do 
             self.buffers[agentId] = self.buffers[agentId] - amount
+            self.bufferSum = self.bufferSum - amount
         end
+        self:updateColourDynamic()
         for agentId,amount in pairs(self.outputAgents) do 
             microbe:storeAgent(agentId, amount)
         end
     end
+
 end
 
+
+-- Override from Organelle:setColour
+function ProcessOrganelle:setColour(colour)
+    Organelle.setColour(self, colour)
+    self.originalColour = colour
+    local rt = self.bufferSum/self.inputSum -- Ratio: how close to required input
+    self:updateColourDynamic()   
+    self._needsColourUpdate = true
+end
 
 -- Buffer amounts aren't stored, could be added fairly easily
 function ProcessOrganelle:storage()
     local storage = Organelle.storage(self)
-    storage:set("processCooldown", self.processCooldown)
+    storage:set("remainingCooldown", self.remainingCooldown)
     local inputAgentsSt = StorageList()
     for agentId, amount in pairs(self.inputAgents) do
         inputStorage = StorageContainer()
@@ -134,14 +164,15 @@ function ProcessOrganelle:storage()
         outputStorage:set("amount", amount)
         outputAgentsSt:append(outputStorage)
     end
-    local storage:set("outputAgents", outputAgentsSt)
+    storage:set("outputAgents", outputAgentsSt)
     return storage
 end
 
 
 function ProcessOrganelle:load(storage)
     Organelle.load(self, storage)
-    self.processCooldown = storage:get("processCooldown", 0)
+    self.originalColour = self._colour
+    self.remainingCooldown = storage:get("remainingCooldown", 0)
     local inputAgentsSt = storage:get("inputAgents", {})
     for i = 1,inputAgentsSt:size() do
         local inputStorage = inputAgentsSt:get(i)
@@ -153,4 +184,3 @@ function ProcessOrganelle:load(storage)
         self:addRecipyOutput(outputStorage:get("agentId", 0), outputStorage:get("amount", 0))
     end
 end
-

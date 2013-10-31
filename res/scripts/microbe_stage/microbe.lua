@@ -10,7 +10,7 @@ function MicrobeComponent:__init()
     Component.__init(self)
     self.organelles = {}
     self.vacuoles = {}
-    self.producerOrganelles = {}
+    self.processOrganelles = {}
     self.movementDirection = Vector3(0, 0, 0)
     self.facingTargetPoint = Vector3(0, 0, 0)
     self.initialized = false
@@ -176,7 +176,7 @@ end
 -- @param processOrganelle
 --  An object of type ProcessOrganelle
 function Microbe:addProcessOrganelle(processOrganelle)
-    table.insert(self.microbe.producerOrganelles, processOrganelle)
+    table.insert(self.microbe.processOrganelles, processOrganelle)
 end
 
 
@@ -274,6 +274,7 @@ end
 function Microbe:storeAgent(agentId, amount)
     local vacuoleList = self.microbe.vacuoles[agentId]
     local remainingAmount = amount
+    print("STORING: " .. agentId)
     if vacuoleList then
         for _, vacuole in ipairs(vacuoleList) do
             local storedAmount = math.min(remainingAmount, vacuole.capacity - vacuole.amount)
@@ -329,14 +330,14 @@ function Microbe:update(milliseconds)
         -- Distribute agents to StorageOrganelles
         if self:getAgentAmount(agentId) > 0 then
             local candidateIndices = {}
-            for i, producer in ipairs(self.microbe.producerOrganelles) do  
-                if producer:wantsInputAgent(agentId) then   
+            for i, processOrg in ipairs(self.microbe.processOrganelles) do  
+                if processOrg:wantsInputAgent(agentId) then   
                     table.insert(candidateIndices, i)
                 end
             end
             if #candidateIndices > 0 then
-                local chosenProducer = self.microbe.producerOrganelles[candidateIndices[math.random(1,#candidateIndices)]] -- TODO: Replace math.random with call to C++ RNGManger
-                chosenProducer:storeAgent(agentId, self:takeAgent(agentId, 1))
+                local chosenProcessOrg = self.microbe.processOrganelles[candidateIndices[math.random(1,#candidateIndices)]] -- TODO: Replace math.random with call to C++ RNGManger
+                chosenProcessOrg:storeAgent(agentId, self:takeAgent(agentId, 1))
             end
         end
     end
