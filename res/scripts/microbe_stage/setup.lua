@@ -194,7 +194,7 @@ local function setupPlayer()
     storageOrganelle3:setColour(ColourValue(0.5, 1, 0, 1))
     player:addOrganelle(-1, 0, storageOrganelle3)
     -- Producer making Oxytoxy-neurotoxin from oxygen
-    local processOrganelle1 = ProcessOrganelle()
+    local processOrganelle1 = ProcessOrganelle(20000) -- 20 second minimum time between producing oxytoxy
     processOrganelle1:addRecipyInput(AgentRegistry.getAgentId("oxygen"), 2)
     processOrganelle1:addRecipyOutput(AgentRegistry.getAgentId("oxytoxy"), 1)
     processOrganelle1:addHex(0, 0)

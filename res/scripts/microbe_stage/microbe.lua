@@ -329,8 +329,8 @@ function Microbe:update(milliseconds)
         -- Distribute agents to StorageOrganelles
         if self:getAgentAmount(agentId) > 0 then
             local candidateIndices = {}
-            for i, producer in ipairs(self.microbe.producerOrganelles) do    
-                if producer:hasInputAgent(agentId) then   
+            for i, producer in ipairs(self.microbe.producerOrganelles) do  
+                if producer:wantsInputAgent(agentId) then   
                     table.insert(candidateIndices, i)
                 end
             end

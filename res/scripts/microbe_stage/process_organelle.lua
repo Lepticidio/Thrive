@@ -4,8 +4,10 @@
 class 'ProcessOrganelle' (Organelle)
 
 -- Constructor
-function ProcessOrganelle:__init()
+function ProcessOrganelle:__init(timeBetweenProcess)
     Organelle.__init(self)
+    self.timeBetweenProcess = timeBetweenProcess
+    self.processCooldown = 0
     self.buffers = {}
     self.inputAgents = {}
     self.outputAgents = {}
@@ -16,6 +18,15 @@ end
 function ProcessOrganelle:onAddedToMicrobe(microbe, q, r)
     Organelle.onAddedToMicrobe(self, microbe, q, r)
     microbe:addProcessOrganelle(self)
+end
+
+
+-- Set the minimum time that has to pass between agents are produced
+-- 
+-- @param milliseconds
+--  The amount of time
+function ProcessOrganelle:setTimeBetweenProcess(milliseconds)
+    self.timeBetweenProcess = milliseconds
 end
 
 
@@ -44,7 +55,9 @@ function ProcessOrganelle:addRecipyOutput(agentId, amount)
 end
 
 
--- Store agent in buffer of processing organelle
+-- Store agent in buffer of processing organelle. 
+-- This will force the organelle to store the agent, even if wantInputAgent is false.
+-- It is recommended to check if wantInputAgent is true before calling.
 --
 -- @param agentId
 --  The agent to be stored
@@ -56,12 +69,17 @@ function ProcessOrganelle:storeAgent(agentId, amount)
 end
 
 
--- Checks if processing organelle has a given agent as an input
+-- Checks if processing organelle wants to store a given agent.
+-- It wants an agent if it has that agent as input and its buffer relatively more full than it's process cooldown has left.
 --
 -- @param agentId
 --  The agent to check for
-function ProcessOrganelle:hasInputAgent(agentId)
-    return self.inputAgents[agentId] ~= nil
+-- 
+-- @returns wantsAgent
+--  true if the agent wants the agent, false if it can't use or doesn't want the agent
+function ProcessOrganelle:wantsInputAgent(agentId)
+    return (self.inputAgents[agentId] ~= nil and 
+          self.processCooldown / (self.inputAgents[agentId] - self.buffers[agentId]) < (self.timeBetweenProcess / self.inputAgents[agentId])) -- calculate if it has enough buffered relative the amount of time left.
 end
 
 
@@ -76,18 +94,23 @@ end
 --  The time since the last call to update()
 function ProcessOrganelle:update(microbe, milliseconds)
     Organelle.update(self, microbe, milliseconds)
-    -- Attempt to produce
-    for agentId,amount in pairs(self.inputAgents) do 
-        if self.buffers[agentId] < self.inputAgents[agentId] then
-            return -- not enough agent material for some agent type. Cannot produce.
+    self.processCooldown = self.processCooldown - milliseconds
+    if self.processCooldown < 0 then self.processCooldown = 0 end
+    if self.processCooldown == 0 then
+        -- Attempt to produce
+        for agentId,amount in pairs(self.inputAgents) do 
+            if self.buffers[agentId] < self.inputAgents[agentId] then
+                return -- not enough agent material for some agent type. Cannot produce.
+            end
         end
-    end
-    -- Sufficient agent material is available for production
-    for agentId,amount in pairs(self.inputAgents) do 
-        self.buffers[agentId] = self.buffers[agentId] - amount
-    end
-    for agentId,amount in pairs(self.outputAgents) do 
-        microbe:storeAgent(agentId, amount)
+        -- Sufficient agent material is available for production
+        self.processCooldown = self.timeBetweenProcess
+        for agentId,amount in pairs(self.inputAgents) do 
+            self.buffers[agentId] = self.buffers[agentId] - amount
+        end
+        for agentId,amount in pairs(self.outputAgents) do 
+            microbe:storeAgent(agentId, amount)
+        end
     end
 end
 
@@ -95,6 +118,7 @@ end
 -- Buffer amounts aren't stored, could be added fairly easily
 function ProcessOrganelle:storage()
     local storage = Organelle.storage(self)
+    storage:set("processCooldown", self.processCooldown)
     inputAgentsSt = StorageList()
     for agentId, amount in pairs(self.inputAgents) do
         inputStorage = StorageContainer()
@@ -117,6 +141,7 @@ end
 
 function ProcessOrganelle:load(storage)
     Organelle.load(self, storage)
+    self.processCooldown = storage:get("processCooldown", 0)
     local inputAgentsSt = storage:get("inputAgents", {})
     for i = 1,inputAgentsSt:size() do
         local inputStorage = inputAgentsSt:get(i)
