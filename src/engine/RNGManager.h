@@ -1,4 +1,5 @@
 #include <random>
+#include <scripting/luabind.h>
 
 using RNGSeed = unsigned int;  // parts <random> uses unsigned int
 
@@ -61,7 +62,7 @@ public:
     *   The used seed
     */
     RNGSeed
-    getSeed();
+    getSeed() const;
 
 
     /**
@@ -80,16 +81,25 @@ public:
     *  Double in range [0, 1]
     */
     double
-    rand();
+    getDouble();
 
     /**
-    * @brief Generates a random number between min and max
+    * @brief Generates a random double between min and max
+    *
+    * @return
+    *  Double in range [min, max]
+    */
+    double
+    getDoubleBetween(double min, double max);
+
+    /**
+    * @brief Generates a random integer between min and max
     *
     * @return
     *  int in range [min, max] inclusive
     */
     int
-    rand(int min, int max);
+    getIntBetween(int min, int max);
 
     /**
     * @brief Shuffles iterable collection.

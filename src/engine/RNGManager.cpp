@@ -23,8 +23,8 @@ RNGManager::luaBindings(){
     return class_<RNGManager>("RNGManager")
         .def(constructor<>())
         .def(constructor<int>())
-        .def("rand", reinterpret_cast<int(RNGManager::*)(int, int)>(&RNGManager::rand)) //Looks like C casts are needed, but treated as error with compiler flag.
-        .def("rand", reinterpret_cast<double(RNGManager::*)()>(&RNGManager::rand))
+   //     .def("rand", reinterpret_cast<int(RNGManager::*)(int, int)>(&RNGManager::rand)) //Looks like C casts are needed, but treated as error with compiler flag.
+    //    .def("rand", reinterpret_cast<double(RNGManager::*)()>(&RNGManager::rand))
         .def("generateRandomSeed", &RNGManager::generateRandomSeed)
         .def("setSeed", &RNGManager::setSeed)
         .def("getSeed", &RNGManager::getSeed)
@@ -53,7 +53,7 @@ RNGManager::setSeed(
 }
 
 RNGSeed
-RNGManager::getSeed() {
+RNGManager::getSeed() const {
     return m_impl->m_seed;
 }
 
@@ -64,13 +64,22 @@ RNGManager::generateRandomSeed() {
 
 
 double
-RNGManager::rand() {
+RNGManager::getDouble() {
     return m_impl->m_realDist(m_impl->m_mt);
+}
+
+double
+RNGManager::getDoubleBetween(
+    double min,
+    double max
+) {
+    std::uniform_real_distribution<double> dis(min, max);
+    return dis(m_impl->m_mt);
 }
 
 
 int
-RNGManager::rand(
+RNGManager::getIntBetween(
     int min,
     int max
 ) {
