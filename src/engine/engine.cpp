@@ -160,7 +160,7 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
             else {
                 int error = 0;
                 error = luaL_loadfile(
-                    m_luaState, 
+                    m_luaState,
                     manifestEntryPath.string().c_str()
                 );
                 error = error or luabind::detail::pcall(m_luaState, 0, LUA_MULTRET);
@@ -284,6 +284,7 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
             std::make_shared<UpdatePhysicsSystem>(),
             std::make_shared<RigidBodyOutputSystem>(),
             std::make_shared<BulletToOgreSystem>(),
+            std::make_shared<CollisionSystem>(),
             m_physics.debugDrawSystem,
             // Graphics
             std::make_shared<OgreAddSceneNodeSystem>(),
@@ -312,7 +313,7 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
         m_input.inputManager = nullptr;
     }
 
-    bool 
+    bool
     windowClosing(
         Ogre::RenderWindow* window
     ) override {
@@ -334,10 +335,10 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
         }
     }
 
-    // Lua state must be one of the last to be destroyed, so keep it at top. 
-    // The reason for that is that some components keep luabind::object 
+    // Lua state must be one of the last to be destroyed, so keep it at top.
+    // The reason for that is that some components keep luabind::object
     // instances around that rely on the lua state to still exist when they
-    // are destroyed. Since those components are destroyed with the entity 
+    // are destroyed. Since those components are destroyed with the entity
     // manager, the lua state has to live longer than the manager.
     LuaState m_luaState;
 
@@ -393,6 +394,8 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
 
     std::list<std::shared_ptr<System>> m_systems;
 
+    std::shared_ptr<CollisionSystem> m_collisionSystem;
+
     std::shared_ptr<OgreViewportSystem> m_viewportSystem;
 
 };
@@ -424,13 +427,13 @@ Engine::luaBindings() {
 
 
 
-Engine::Engine() 
+Engine::Engine()
   : m_impl(new Implementation(*this))
 {
 }
 
 
-Engine::~Engine() { 
+Engine::~Engine() {
     m_impl->m_physics.world.reset();
 }
 
@@ -570,4 +573,7 @@ Engine::viewportSystem() {
     return *(m_impl->m_viewportSystem);
 }
 
-
+CollisionSystem&
+Engine::collisionSystem() {
+    return *(m_impl->m_collisionSystem.get());
+}

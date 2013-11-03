@@ -29,19 +29,20 @@ class EntityManager;
 class KeyboardSystem;
 class MouseSystem;
 class OgreViewportSystem;
+class CollisionSystem;
 class System;
 
 /**
 * @brief The heart of the game
 *
-* The engine keeps an ordered list of System objects and updates them each 
+* The engine keeps an ordered list of System objects and updates them each
 * frame. It handles initialization and shutdown of graphics, physics, scripts
 * and more.
 */
 class Engine {
 
 public:
-    
+
     /**
     * @brief Lua bindings
     *
@@ -55,7 +56,7 @@ public:
     * - Engine::mouse() (as property)
     * - Engine::sceneManager() (as property)
     *
-    * @return 
+    * @return
     */
     static luabind::scope
     luaBindings();
@@ -90,7 +91,7 @@ public:
     /**
     * @brief Returns the internal component factory
     *
-    * @return 
+    * @return
     */
     ComponentFactory&
     componentFactory();
@@ -105,7 +106,7 @@ public:
     /**
     * @brief Initializes the engine
     *
-    * This sets up basic data structures for the different engine parts 
+    * This sets up basic data structures for the different engine parts
     * (input, graphics, physics, etc.) and then calls System::init() on
     * all systems.
     */
@@ -192,7 +193,7 @@ public:
     * This calls System::shutdown() on all systems and then destroys the data
     * structures created in Engine::init().
     */
-    void 
+    void
     shutdown();
 
     /**
@@ -204,7 +205,7 @@ public:
     *   The number of milliseconds to advance. For real-time, this is the
     *   number of milliseconds since the last frame.
     */
-    void 
+    void
     update(
         int milliseconds
     );
@@ -216,13 +217,19 @@ public:
     viewportSystem();
 
     /**
+    * @brief The collision system
+    */
+    CollisionSystem&
+    collisionSystem();
+
+    /**
     * @brief The render window
     */
     Ogre::RenderWindow*
     renderWindow() const;
 
 private:
-    
+
     struct Implementation;
     std::unique_ptr<Implementation> m_impl;
 
