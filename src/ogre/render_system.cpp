@@ -1,6 +1,7 @@
 #include "ogre/render_system.h"
 
 #include "engine/engine.h"
+#include "engine/game_state.h"
 
 #include <OgreRoot.h>
 
@@ -24,10 +25,10 @@ RenderSystem::~RenderSystem() {}
 
 void
 RenderSystem::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    System::init(engine);
-    m_impl->m_root = engine->ogreRoot();
+    System::init(gameState);
+    m_impl->m_root = this->engine()->ogreRoot();
     assert(m_impl->m_root != nullptr && "Root object is null. Initialize the Engine first.");
 }
 

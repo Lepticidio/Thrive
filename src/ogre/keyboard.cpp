@@ -1,6 +1,5 @@
-#include "ogre/keyboard_system.h"
+#include "ogre/keyboard.h"
 
-#include "engine/engine.h"
 #include "scripting/luabind.h"
 
 #include <iostream>
@@ -9,7 +8,7 @@
 
 using namespace thrive;
 
-struct KeyboardSystem::Implementation : public OIS::KeyListener{
+struct Keyboard::Implementation : public OIS::KeyListener{
 
     bool
     keyPressed(
@@ -39,6 +38,8 @@ struct KeyboardSystem::Implementation : public OIS::KeyListener{
         m_queue.push_back(keyEvent);
     }
 
+    OIS::InputManager* m_inputManager = nullptr;
+
     OIS::Keyboard* m_keyboard = nullptr;
 
     std::list<KeyEvent> m_queue;
@@ -47,17 +48,17 @@ struct KeyboardSystem::Implementation : public OIS::KeyListener{
 
 
 luabind::scope
-KeyboardSystem::luaBindings() {
+Keyboard::luaBindings() {
     using namespace luabind;
-    return class_<KeyboardSystem>("KeyboardSystem")
-        .def("isKeyDown", &KeyboardSystem::isKeyDown)
+    return class_<Keyboard>("Keyboard")
+        .def("isKeyDown", &Keyboard::isKeyDown)
         .scope [
-            class_<KeyboardSystem::KeyEvent>("KeyEvent")
-                .def_readonly("key", &KeyboardSystem::KeyEvent::key)
-                .def_readonly("alt", &KeyboardSystem::KeyEvent::alt)
-                .def_readonly("ctrl", &KeyboardSystem::KeyEvent::ctrl)
-                .def_readonly("shift", &KeyboardSystem::KeyEvent::shift)
-                .def_readonly("pressed", &KeyboardSystem::KeyEvent::pressed)
+            class_<Keyboard::KeyEvent>("KeyEvent")
+                .def_readonly("key", &Keyboard::KeyEvent::key)
+                .def_readonly("alt", &Keyboard::KeyEvent::alt)
+                .def_readonly("ctrl", &Keyboard::KeyEvent::ctrl)
+                .def_readonly("shift", &Keyboard::KeyEvent::shift)
+                .def_readonly("pressed", &Keyboard::KeyEvent::pressed)
         ]
         .enum_("KeyCode") [
             value("KC_UNASSIGNED", OIS::KC_UNASSIGNED),
@@ -135,36 +136,36 @@ KeyboardSystem::luaBindings() {
 }
 
 
-KeyboardSystem::KeyboardSystem()
+Keyboard::Keyboard()
   : m_impl(new Implementation())
 {
 }
 
 
-KeyboardSystem::~KeyboardSystem() {}
+Keyboard::~Keyboard() {}
 
 
-const std::list<KeyboardSystem::KeyEvent>&
-KeyboardSystem::eventQueue() {
+const std::list<Keyboard::KeyEvent>&
+Keyboard::eventQueue() const {
     return m_impl->m_queue;
 }
 
 
 void
-KeyboardSystem::init(
-    Engine* engine
+Keyboard::init(
+    OIS::InputManager* inputManager
 ) {
-    System::init(engine);
     assert(m_impl->m_keyboard == nullptr && "Double init of keyboard system");
+    m_impl->m_inputManager = inputManager;
     m_impl->m_keyboard = static_cast<OIS::Keyboard*>(
-        engine->inputManager()->createInputObject(OIS::OISKeyboard, true)
+        inputManager->createInputObject(OIS::OISKeyboard, true)
     );
     m_impl->m_keyboard->setEventCallback(m_impl.get());
 }
 
 
 bool
-KeyboardSystem::isKeyDown(
+Keyboard::isKeyDown(
     OIS::KeyCode key
 ) const {
     if (m_impl->m_keyboard) {
@@ -177,18 +178,16 @@ KeyboardSystem::isKeyDown(
 
 
 void
-KeyboardSystem::shutdown() {
-    this->engine()->inputManager()->destroyInputObject(m_impl->m_keyboard);
+Keyboard::shutdown() {
+    m_impl->m_inputManager->destroyInputObject(m_impl->m_keyboard);
+    m_impl->m_inputManager = nullptr;
     m_impl->m_keyboard = nullptr;
-    System::shutdown();
 }
 
 
 void
-KeyboardSystem::update(int) {
+Keyboard::update() {
     m_impl->m_queue.clear();
     m_impl->m_keyboard->capture();
 }
-
-
 

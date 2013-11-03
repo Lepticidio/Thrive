@@ -28,7 +28,7 @@ public:
     */
     void
     init(
-        Engine* engine
+        GameState* gameState
     ) override;
 
     /**

@@ -1,6 +1,6 @@
 #include "bullet/update_physics_system.h"
 
-#include "engine/engine.h"
+#include "engine/game_state.h"
 
 #include <assert.h>
 #include <btBulletDynamicsCommon.h>
@@ -26,10 +26,10 @@ UpdatePhysicsSystem::~UpdatePhysicsSystem() {}
 
 void
 UpdatePhysicsSystem::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    System::init(engine);
-    m_impl->m_world = engine->physicsWorld();
+    System::init(gameState);
+    m_impl->m_world = gameState->physicsWorld();
     assert(m_impl->m_world != nullptr && "World object is null. Initialize the Engine first.");
 }
 

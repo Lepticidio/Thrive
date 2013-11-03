@@ -1,12 +1,15 @@
 #pragma once
 
-#include "engine/system.h"
-
 #include <list>
+#include <memory>
 #include <OISKeyboard.h>
 
 namespace luabind {
 class scope;
+}
+
+namespace OIS {
+class InputManager;
 }
 
 namespace thrive {
@@ -14,7 +17,7 @@ namespace thrive {
 /**
 * @brief Handles keyboard events
 */
-class KeyboardSystem : public System {
+class Keyboard {
 
 public:
 
@@ -54,13 +57,13 @@ public:
     * @brief Lua bindings
     *
     * Exposes:
-    * - KeyboardSystem::isKeydown
-    * - KeyboardSystem::KeyEvent
-    *   - KeyboardSystem::KeyEvent::key
-    *   - KeyboardSystem::KeyEvent::alt
-    *   - KeyboardSystem::KeyEvent::ctrl
-    *   - KeyboardSystem::KeyEvent::shift
-    *   - KeyboardSystem::KeyEvent::pressed
+    * - Keyboard::isKeydown
+    * - Keyboard::KeyEvent
+    *   - Keyboard::KeyEvent::key
+    *   - Keyboard::KeyEvent::alt
+    *   - Keyboard::KeyEvent::ctrl
+    *   - Keyboard::KeyEvent::shift
+    *   - Keyboard::KeyEvent::pressed
     * - <a href="http://code.joyridelabs.de/ois_api/OISKeyboard_8h_source.html#l00031">KeyCode</a>
     *
     */
@@ -70,12 +73,12 @@ public:
     /**
     * @brief Constructor
     */
-    KeyboardSystem();
+    Keyboard();
 
     /**
     * @brief Destructor
     */
-    ~KeyboardSystem();
+    ~Keyboard();
 
     /**
     * @brief A list of key events in the current frame
@@ -85,17 +88,17 @@ public:
     * @return 
     */
     const std::list<KeyEvent>&
-    eventQueue();
+    eventQueue() const;
 
     /**
-    * @brief Initializes the system
+    * @brief Initializes the keyboard
     *
     * @param engine
     */
     void
     init(
-        Engine* engine
-    ) override;
+        OIS::InputManager* inputManager
+    );
 
     /**
     * @brief Checks whether a key is pressed down
@@ -113,18 +116,16 @@ public:
     ) const;
 
     /**
-    * @brief Shuts down the system
+    * @brief Shuts down the keyboard
     */
     void
-    shutdown() override;
+    shutdown();
 
     /**
     * @brief Updates the queue with new events
     */
     void
-    update(
-        int
-    ) override;
+    update();
 
 private:
     

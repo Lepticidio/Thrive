@@ -9,6 +9,8 @@ class scope;
 namespace thrive {
 
 class Engine;
+class EntityManager;
+class GameState;
 
 /**
 * @brief A system handles one specific part of the game
@@ -63,17 +65,23 @@ public:
     Engine*
     engine() const;
 
+    EntityManager*
+    entityManager() const;
+
+    GameState*
+    gameState() const;
+
     /**
     * @brief Initializes the system
     *
     * Override this to prepare the system for updating.
     *
-    * @param engine
-    *   The engine the system belongs to
+    * @param gameState
+    *   The gameState the system belongs to
     */
     virtual void
     init(
-        Engine* engine
+        GameState* gameState
     );
 
     /**

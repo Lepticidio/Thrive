@@ -170,7 +170,11 @@ public:
     *
     * @param engine
     */
-    void init(Engine* engine) override;
+    void init(GameState* gameState) override;
+
+    void removeAllViewports();
+
+    void restoreAllViewports();
 
     /**
     * @brief Shuts the system down
