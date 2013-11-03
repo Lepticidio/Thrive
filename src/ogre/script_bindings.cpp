@@ -3,9 +3,9 @@
 #include "scripting/luabind.h"
 #include "ogre/camera_system.h"
 #include "ogre/colour_material.h"
-#include "ogre/keyboard_system.h"
+#include "ogre/keyboard.h"
 #include "ogre/light_system.h"
-#include "ogre/mouse_system.h"
+#include "ogre/mouse.h"
 #include "ogre/scene_node_system.h"
 #include "ogre/script_bindings.h"
 #include "ogre/sky_system.h"
@@ -515,8 +515,8 @@ thrive::OgreBindings::luaBindings() {
         SkyPlaneComponent::luaBindings(),
         TextOverlayComponent::luaBindings(),
         // Other
-        KeyboardSystem::luaBindings(),
-        MouseSystem::luaBindings(),
+        Keyboard::luaBindings(),
+        Mouse::luaBindings(),
         OgreViewportComponent::luaBindings()
     );
 }

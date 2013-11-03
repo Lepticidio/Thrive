@@ -1,7 +1,7 @@
 #include "ogre/light_system.h"
 
 #include "engine/component_factory.h"
-#include "engine/engine.h"
+#include "engine/game_state.h"
 #include "engine/entity_filter.h"
 #include "engine/serialization.h"
 #include "ogre/scene_node_system.h"
@@ -133,12 +133,12 @@ OgreLightSystem::~OgreLightSystem() {}
 
 void
 OgreLightSystem::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    System::init(engine);
+    System::init(gameState);
     assert(m_impl->m_sceneManager == nullptr && "Double init of system");
-    m_impl->m_sceneManager = engine->sceneManager();
-    m_impl->m_entities.setEntityManager(&engine->entityManager());
+    m_impl->m_sceneManager = gameState->sceneManager();
+    m_impl->m_entities.setEntityManager(&gameState->entityManager());
 }
 
 

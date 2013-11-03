@@ -3,6 +3,7 @@
 #include "engine/typedefs.h"
 
 #include <memory>
+#include <vector>
 
 class btDiscreteDynamicsWorld;
 class lua_State;
@@ -26,8 +27,9 @@ namespace thrive {
 
 class ComponentFactory;
 class EntityManager;
-class KeyboardSystem;
-class MouseSystem;
+class GameState;
+class Keyboard;
+class Mouse;
 class OgreViewportSystem;
 class System;
 
@@ -46,10 +48,9 @@ public:
     * @brief Lua bindings
     *
     * Exposes:
-    * - Engine::addScriptSystem()
+    * - Engine::addGameState()
     * - Engine::load()
     * - Engine::save()
-    * - Engine::setPhysicsDebugDrawingEnabled()
     * - Engine::componentFactory() (as property)
     * - Engine::keyboard() (as property)
     * - Engine::mouse() (as property)
@@ -77,14 +78,18 @@ public:
     ~Engine();
 
     /**
-    * @brief Adds a system to the ScriptSystemUpdater
+    * @brief Creates a new game state
     *
-    * @param system
-    *   The system to add
+    * @param name
+    *   The game state's name
+    *
+    * @param systems
+    *   The systems active in the game state
     */
     void
-    addScriptSystem(
-        std::shared_ptr<System> system
+    addGameState(
+        std::string name,
+        std::vector<std::unique_ptr<System>> systems
     );
 
     /**
@@ -95,12 +100,8 @@ public:
     ComponentFactory&
     componentFactory();
 
-    /**
-    * @brief The engine's entity manager
-    *
-    */
-    EntityManager&
-    entityManager();
+    GameState*
+    currentGameState() const;
 
     /**
     * @brief Initializes the engine
@@ -118,11 +119,8 @@ public:
     OIS::InputManager*
     inputManager() const;
 
-    /**
-    * @brief The keyboard system
-    */
-    KeyboardSystem&
-    keyboardSystem() const;
+    const Keyboard&
+    keyboard() const;
 
     /**
     * @brief Loads a savegame
@@ -141,23 +139,14 @@ public:
     lua_State*
     luaState();
 
-    /**
-    * @brief The mouse system
-    */
-    MouseSystem&
-    mouseSystem() const;
+    const Mouse&
+    mouse() const;
 
     /**
     * @brief The Ogre root object
     */
     Ogre::Root*
     ogreRoot() const;
-
-    /**
-    * @brief The physics world
-    */
-    btDiscreteDynamicsWorld*
-    physicsWorld() const;
 
     /**
     * @brief Creates a savegame
@@ -170,20 +159,9 @@ public:
         std::string filename
     );
 
-    /**
-    * @brief The Ogre scene manager
-    */
-    Ogre::SceneManager*
-    sceneManager() const;
-
-    /**
-    * @brief Enables or disables physics debug drawing
-    *
-    * @param enabled
-    */
     void
-    setPhysicsDebugDrawingEnabled(
-        bool enabled
+    setCurrentGameState(
+        std::string name
     );
 
     /**
@@ -208,12 +186,6 @@ public:
     update(
         int milliseconds
     );
-
-    /**
-    * @brief The viewport system
-    */
-    OgreViewportSystem&
-    viewportSystem();
 
     /**
     * @brief The render window

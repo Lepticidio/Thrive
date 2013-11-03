@@ -1,7 +1,7 @@
 #include "ogre/text_overlay.h"
 
 #include "engine/component_factory.h"
-#include "engine/engine.h"
+#include "engine/game_state.h"
 #include "engine/entity_filter.h"
 #include "engine/serialization.h"
 #include "scripting/luabind.h"
@@ -149,10 +149,10 @@ TextOverlaySystem::~TextOverlaySystem() {}
 
 void
 TextOverlaySystem::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    System::init(engine);
-    m_impl->m_entities.setEntityManager(&engine->entityManager());
+    System::init(gameState);
+    m_impl->m_entities.setEntityManager(&gameState->entityManager());
     m_impl->m_overlay->show();
 }
 

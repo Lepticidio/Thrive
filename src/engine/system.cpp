@@ -1,6 +1,7 @@
 #include "engine/system.h"
 
 #include "engine/engine.h"
+#include "engine/game_state.h"
 #include "scripting/luabind.h"
 
 #include <assert.h>
@@ -17,16 +18,16 @@ struct SystemWrapper : System, luabind::wrap_base {
 
     void
     init(
-        Engine* engine
+        GameState* gameState
     ) override {
-        call<void>("init", engine);
+        call<void>("init", gameState);
     }
 
     static void default_init(
         System* self, 
-        Engine* engine
+        GameState* gameState
     ) {
-        self->System::init(engine);
+        self->System::init(gameState);
     }
 
     void
@@ -79,7 +80,7 @@ struct System::Implementation {
 
     bool m_active = true;
 
-    Engine* m_engine = nullptr;
+    GameState* m_gameState = nullptr;
 
 };
 
@@ -101,16 +102,38 @@ System::active() const {
 
 Engine*
 System::engine() const {
-    return m_impl->m_engine;
+    if (m_impl->m_gameState) {
+        return &m_impl->m_gameState->engine();
+    }
+    else {
+        return nullptr;
+    }
+}
+
+
+EntityManager*
+System::entityManager() const {
+    if (m_impl->m_gameState) {
+        return &m_impl->m_gameState->entityManager();
+    }
+    else {
+        return nullptr;
+    }
+}
+
+
+GameState*
+System::gameState() const {
+    return m_impl->m_gameState;
 }
 
 
 void
 System::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    assert(m_impl->m_engine == nullptr && "Cannot initialize system that is already attached to an engine");
-    m_impl->m_engine = engine;
+    assert(m_impl->m_gameState == nullptr && "Cannot initialize system that is already attached to a GameState");
+    m_impl->m_gameState = gameState;
 }
 
 
@@ -125,6 +148,6 @@ System::setActive(
 
 void
 System::shutdown() {
-    m_impl->m_engine = nullptr;
+    m_impl->m_gameState = nullptr;
 }
 

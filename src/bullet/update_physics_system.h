@@ -26,12 +26,10 @@ public:
     /**
     * @brief Initializes the system
     *
-    * @param engine
-    *   Must be a BulletEngine
     */
     void
     init(
-        Engine* engine
+        GameState* gameState
     ) override;
 
     /**

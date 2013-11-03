@@ -25,11 +25,10 @@ public:
     /**
     * @brief Initializes the system
     *
-    * @param engine
     */
     void
     init(
-        Engine* engine
+        GameState* gameState
     ) override;
 
     /**

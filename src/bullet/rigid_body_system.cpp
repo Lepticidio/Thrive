@@ -2,7 +2,7 @@
 
 #include "bullet/bullet_ogre_conversion.h"
 #include "engine/component_factory.h"
-#include "engine/engine.h"
+#include "engine/game_state.h"
 #include "engine/entity_filter.h"
 #include "scripting/luabind.h"
 #include "engine/serialization.h"
@@ -189,12 +189,12 @@ RigidBodyInputSystem::~RigidBodyInputSystem() {}
 
 void
 RigidBodyInputSystem::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    System::init(engine);
+    System::init(gameState);
     assert(m_impl->m_world == nullptr && "Double init of system");
-    m_impl->m_world = engine->physicsWorld();
-    m_impl->m_entities.setEntityManager(&engine->entityManager());
+    m_impl->m_world = gameState->physicsWorld();
+    m_impl->m_entities.setEntityManager(&gameState->entityManager());
 }
 
 
@@ -336,10 +336,10 @@ RigidBodyOutputSystem::~RigidBodyOutputSystem() {}
 
 void
 RigidBodyOutputSystem::init(
-    Engine* engine
+    GameState* gameState
 ) {
-    System::init(engine);
-    m_impl->m_entities.setEntityManager(&engine->entityManager());
+    System::init(gameState);
+    m_impl->m_entities.setEntityManager(&gameState->entityManager());
 }
 
 

@@ -37,40 +37,6 @@ SaveSystem::save(
 
 void
 SaveSystem::update(int) {
-    StorageContainer entities;
-    try {
-        entities = this->engine()->entityManager().storage(
-            this->engine()->componentFactory()
-        );
-    }
-    catch (const luabind::error& e) {
-        luabind::object error_msg(luabind::from_stack(
-            e.state(),
-            -1
-        ));
-        // TODO: Log error
-        std::cerr << error_msg << std::endl;
-        throw;
-    }
-    StorageContainer savegame;
-    savegame.set("entities", std::move(entities));
-    std::ofstream stream(m_impl->m_filename, std::ofstream::trunc | std::ofstream::binary);
-    stream.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-    if (stream) {
-        try {
-            stream << savegame;
-            stream.flush();
-            stream.close();
-        }
-        catch (const std::ofstream::failure& e) {
-            std::cerr << "Error saving file: " << e.what() << std::endl;
-            throw;
-        }
-    }
-    else {
-        std::perror("Could not open file for saving");
-    }
-    this->setActive(false);
 }
 
 
@@ -105,34 +71,4 @@ LoadSystem::load(
 
 void
 LoadSystem::update(int) {
-    EntityManager& entityManager = this->engine()->entityManager();
-    std::ifstream stream(m_impl->m_filename, std::ifstream::binary);
-    stream.clear();
-    stream.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-    StorageContainer savegame;
-    try {
-        stream >> savegame;
-    }
-    catch(const std::ofstream::failure& e) {
-        std::cerr << "Error loading file: " << e.what() << std::endl;
-        throw;
-    }
-    StorageContainer entities = savegame.get<StorageContainer>("entities");
-    entityManager.clear();
-    try {
-        this->engine()->entityManager().restore(
-            entities,
-            this->engine()->componentFactory()
-        );
-    }
-    catch (const luabind::error& e) {
-        luabind::object error_msg(luabind::from_stack(
-            e.state(),
-            -1
-        ));
-        // TODO: Log error
-        std::cerr << error_msg << std::endl;
-        throw;
-    }
-    this->setActive(false);
 }
