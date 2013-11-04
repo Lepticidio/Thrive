@@ -1,7 +1,7 @@
-
+##include <stdint.h>
 #include "bullet/collision_system.h"
 
-//#include "engine/component_factory.h"
+#include "engine/component_factory.h"
 #include "engine/engine.h"
 
 #include "scripting/luabind.h"
@@ -13,6 +13,7 @@
 #include "engine/entity_manager.h"
 #include "engine/entity.h"
 #include "game.h"
+
 
 using namespace thrive;
 
@@ -68,7 +69,7 @@ CollisionHandlerComponent::storage() const {
     return storage;
 }
 
-//REGISTER_COMPONENT(CollisionHandlerComponent)
+REGISTER_COMPONENT(CollisionHandlerComponent)
 
 
 
@@ -122,8 +123,8 @@ CollisionSystem::update(int) {
         btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(i);
         auto objectA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
         auto objectB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
-        EntityId entityId1 = (reinterpret_cast<EntityId>(objectA->getUserPointer()));
-        EntityId entityId2 = (reinterpret_cast<EntityId>(objectB->getUserPointer()));
+        uintptr_tr entityId1 = (reinterpret_cast<uintptr_tr>(objectA->getUserPointer()));
+        uintptr_tr entityId2 = (reinterpret_cast<uintptr_tr>(objectB->getUserPointer()));
 
         CollisionCallback callback = callbackFunctions[static_cast<CollisionHandlerComponent*>(
                                             System::engine()->entityManager().getComponent(entityId1, CollisionHandlerComponent::TYPE_ID)

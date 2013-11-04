@@ -1,5 +1,5 @@
 #pragma once
-
+#include <stdint.h>
 //#include "bullet/collision_shape.h"
 #include "engine/component.h"
 #include "engine/system.h"
@@ -19,7 +19,25 @@ namespace thrive {
 * @brief A component for a collision reactive entity
 */
 class CollisionHandlerComponent : public Component {
-    COMPONENT(CollisionHandlerComponent)
+        public:
+
+        static const ComponentTypeId TYPE_ID;
+
+        ComponentTypeId typeId() const override {
+            return TYPE_ID;
+        }
+
+        static const std::string& TYPE_NAME() {
+            static std::string string("CollisionHandlerComponent");
+            return string;
+        }
+
+        std::string typeName() const override {
+            return TYPE_NAME();
+        }
+
+    private:
+
 
 public:
 
