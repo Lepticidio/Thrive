@@ -404,7 +404,7 @@ Engine_addGameState(
     for (luabind::iterator iter(luaSystems), end; iter != end; ++iter) {
         System* system = luabind::object_cast<System*>(
             *iter,
-            luabind::adopt(_1)
+            luabind::adopt(luabind::result)
         );
         systems.emplace_back(system);
     }
