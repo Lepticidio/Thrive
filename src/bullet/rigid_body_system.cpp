@@ -6,9 +6,8 @@
 #include "engine/entity_filter.h"
 #include "scripting/luabind.h"
 #include "engine/serialization.h"
-#include "engine/entity.h"
+
 #include <iostream>
-#include "game.h"
 
 using namespace thrive;
 
@@ -101,14 +100,6 @@ RigidBodyComponent::getWorldTransform(
 
 }
 
-void
-RigidBodyComponent::handleCollision(
-    Entity& self,
-    Entity& opponent
-) {
-    if (m_properties.collisionCallback != nullptr)
-        m_properties.collisionCallback(self, opponent);
-}
 
 void
 RigidBodyComponent::load(
@@ -378,87 +369,4 @@ RigidBodyOutputSystem::update(int) {
             dynamicProperties.angularVelocity = Ogre::Vector3::ZERO;
         }
     }
-}
-
-struct CollisionEvent {
-
-    CollisionEvent(
-        Entity& entity1,
-        Entity& entity2
-    ) : entity1(entity1), entity2(entity2)
-    {
-    }
-
-    Entity entity1;
-    Entity entity2;
-};
-
-struct CollisionSystem::Implementation {
-
-    std::vector<CollisionEvent> m_events;
-
-};
-
-
-CollisionSystem::CollisionSystem()
-  : m_impl(new Implementation())
-{
-}
-
-
-CollisionSystem::~CollisionSystem() {}
-
-
-void
-CollisionSystem::init(
-    Engine* engine
-) {
-    System::init(engine);
-}
-
-
-void
-CollisionSystem::shutdown() {
-    System::shutdown();
-}
-
-
-void
-CollisionSystem::update(
-    int milliSeconds
-) {
-    for(auto& event : m_impl->m_events)
-    {
-        static_cast<RigidBodyComponent*>(event.entity1.getComponent(RigidBodyComponent::TYPE_ID))->handleCollision(event.entity1, event.entity2);
-    }
-    m_impl->m_events.clear();
-
-    if (false)milliSeconds+=0; //Ugly hack to remove unjust warning. (Werror)
-}
-
-
-void
-CollisionSystem::addCollision(
-    const btCollisionObjectWrapper* object1,
-    const btCollisionObjectWrapper* object2
-) {
-    m_impl->m_events.push_back(CollisionEvent(
-        *static_cast<Entity*>(object1->getCollisionObject()->getUserPointer()),
-        *static_cast<Entity*>(object2->getCollisionObject()->getUserPointer())));
-}
-
-
-static bool
-collisionCallback(
-    btManifoldPoint& cp,
-    const btCollisionObjectWrapper* obj1,
-    int id1,
-    int index1,
-    const btCollisionObjectWrapper* obj2,
-    int id2,
-    int index2
-) {
-    Game::instance().engine().collisionSystem().addCollision(obj1, obj2);
-    if (false) {collisionCallback(cp,obj1, id1, index1,obj2, id2, index2);} //Ugly hack to remove two unjust warnings. (Werror)
-    return false;
 }

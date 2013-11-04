@@ -4,7 +4,6 @@
 #include "engine/component.h"
 #include "engine/system.h"
 #include "engine/touchable.h"
-#include "engine/entity.h"
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
@@ -92,12 +91,6 @@ public:
         * @brief Whether this body is kinematic
         */
         bool kinematic = false;
-
-
-        /**
-        * @brief Callback upon collision
-        */
-        std::function<void (Entity& self, Entity& opponent)> collisionCallback;
 
     };
 
@@ -219,14 +212,6 @@ public:
     getWorldTransform(
         btTransform& transform
     ) const override;
-
-
-    void
-    handleCollision(
-        Entity& self,
-        Entity& opponent
-    );
-
 
     /**
     * @brief Loads the component
@@ -408,57 +393,6 @@ public:
     * @param milliSeconds
     */
     void update(int milliSeconds) override;
-
-private:
-
-    struct Implementation;
-    std::unique_ptr<Implementation> m_impl;
-};
-
-
-class CollisionSystem : public System {
-
-public:
-
-    /**
-    * @brief Constructor
-    */
-    CollisionSystem();
-
-    /**
-    * @brief Destructor
-    */
-    ~CollisionSystem();
-
-    /**
-    * @brief Initializes the engine
-    *
-    * @param engine
-    */
-    void init(Engine* engine) override;
-
-    /**
-    * @brief Shuts the system down
-    */
-    void shutdown() override;
-
-    /**
-    * @brief Updates the system
-    *
-    * @param milliSeconds
-    */
-    void update(int milliSeconds) override;
-
-    /**
-    * @brief Queues a collision for handling
-    *
-    * @param object1
-    *  The first object that collided
-    *
-    * @param object1
-    *  The second object that collided
-    */
-    void addCollision(const btCollisionObjectWrapper* object1, const btCollisionObjectWrapper* object2);
 
 private:
 

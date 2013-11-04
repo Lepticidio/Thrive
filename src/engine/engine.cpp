@@ -12,6 +12,7 @@
 #include "bullet/debug_drawing.h"
 #include "bullet/rigid_body_system.h"
 #include "bullet/update_physics_system.h"
+#include "bullet/collision_system.h"
 
 // Ogre
 #include "ogre/camera_system.h"
