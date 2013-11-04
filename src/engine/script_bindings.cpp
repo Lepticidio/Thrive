@@ -4,6 +4,7 @@
 #include "engine/component_factory.h"
 #include "engine/engine.h"
 #include "engine/entity.h"
+#include "engine/game_state.h"
 #include "engine/serialization.h"
 #include "engine/system.h"
 #include "engine/touchable.h"
@@ -19,6 +20,7 @@ thrive::EngineBindings::luaBindings() {
         ComponentFactory::luaBindings(),
         Entity::luaBindings(),
         Touchable::luaBindings(),
+        GameState::luaBindings(),
         Engine::luaBindings()
     );
 }
