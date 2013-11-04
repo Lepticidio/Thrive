@@ -114,13 +114,17 @@ GameState::~GameState() {}
 
 void
 GameState::activate() {
-    m_impl->m_viewportSystem->restoreAllViewports();
+    if (m_impl->m_viewportSystem) {
+        m_impl->m_viewportSystem->restoreAllViewports();
+    }
 }
 
 
 void
 GameState::deactivate() {
-    m_impl->m_viewportSystem->removeAllViewports();
+    if (m_impl->m_viewportSystem) {
+        m_impl->m_viewportSystem->removeAllViewports();
+    }
 }
 
 
