@@ -3,7 +3,9 @@
 #include "bullet/bullet_ogre_conversion.h"
 #include "bullet/collision_shape.h"
 #include "bullet/rigid_body_system.h"
+#include "bullet/collision_system.h"
 #include "scripting/luabind.h"
+
 
 #include <btBulletCollisionCommon.h>
 #include <memory>
@@ -23,7 +25,8 @@ thrive::BulletBindings::luaBindings() {
         CylinderShape::luaBindings(),
         EmptyShape::luaBindings(),
         SphereShape::luaBindings(),
-        RigidBodyComponent::luaBindings()
+        RigidBodyComponent::luaBindings(),
+        CollisionHandlerComponent::luaBindings()
     );
 }
 

@@ -1,4 +1,3 @@
-##include <stdint.h>
 #include "bullet/collision_system.h"
 
 #include "engine/component_factory.h"
@@ -8,12 +7,9 @@
 
 #include <unordered_map>
 #include "bullet/rigid_body_system.h"
-//#include "engine/entity_filter.h"
 #include "engine/serialization.h"
 #include "engine/entity_manager.h"
 #include "engine/entity.h"
-#include "game.h"
-
 
 using namespace thrive;
 
@@ -89,6 +85,7 @@ struct CollisionSystem::Implementation {
 CollisionSystem::CollisionSystem()
   : m_impl(new Implementation())
 {
+    CollisionSystem::registerCollisionCallback("microbe_message", [](EntityId, EntityId){std::cout << "YAYA!!";});
 }
 
 
@@ -120,17 +117,36 @@ CollisionSystem::update(int) {
     int numManifolds = dispatcher->getNumManifolds();
     for (int i=0;i<numManifolds;i++)
     {
+
         btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(i);
         auto objectA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
         auto objectB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
-        uintptr_tr entityId1 = (reinterpret_cast<uintptr_tr>(objectA->getUserPointer()));
-        uintptr_tr entityId2 = (reinterpret_cast<uintptr_tr>(objectB->getUserPointer()));
+        EntityId entityId1 = (reinterpret_cast<uintptr_t>(objectA->getUserPointer()));
+        EntityId entityId2 = (reinterpret_cast<uintptr_t>(objectB->getUserPointer()));
+        Component* componentPtr = System::engine()->entityManager().getComponent(entityId1, CollisionHandlerComponent::TYPE_ID);
+        if (componentPtr)
+        {
+            CollisionCallback callback = callbackFunctions[static_cast<CollisionHandlerComponent*>(
+                                            componentPtr
+                                        )->m_collisionCallbackKey];
+            if (callback != nullptr)
+            {
+                callback(entityId1, entityId2);
+            }
 
-        CollisionCallback callback = callbackFunctions[static_cast<CollisionHandlerComponent*>(
-                                            System::engine()->entityManager().getComponent(entityId1, CollisionHandlerComponent::TYPE_ID)
-                                        )->m_collisionCallbackKey];     //Obtain the correct callback function
-        callback(entityId1, entityId2);
+        }
+        componentPtr = System::engine()->entityManager().getComponent(entityId2, CollisionHandlerComponent::TYPE_ID);
+        if (componentPtr)
+        {
+            CollisionCallback callback = callbackFunctions[static_cast<CollisionHandlerComponent*>(
+                                            componentPtr
+                                        )->m_collisionCallbackKey];
+            if (callback != nullptr)
+            {
+                callback(entityId2, entityId1);
+            }
 
+        }
         contactManifold->clearManifold();
     }
 }

@@ -1,11 +1,8 @@
 #pragma once
-#include <stdint.h>
-//#include "bullet/collision_shape.h"
+
 #include "engine/component.h"
 #include "engine/system.h"
 #include "engine/entity.h"
-
-#include <btBulletCollisionCommon.h>
 
 #include <iostream>
 
