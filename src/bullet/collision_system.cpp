@@ -37,31 +37,15 @@ void
 CollisionHandlerComponent::load(
     const StorageContainer& storage
 ) {
-    Component::load(storage);/*
-    // Static
-    m_properties.shape = CollisionShape::load(storage.get<StorageContainer>("shape", StorageContainer()));
-    m_properties.restitution = storage.get<btScalar>("restitution", 0.0f);
-    m_properties.rollingFriction = storage.get<btScalar>("rollingFriction", 0.0f);
-    m_properties.hasContactResponse = storage.get<bool>("hasContactResponse", true);
-    m_properties.kinematic = storage.get<bool>("kinematic", false);
-    m_properties.touch();
-    // Dynamic
-    m_dynamicProperties.position = storage.get<Ogre::Vector3>("position", Ogre::Vector3::ZERO);
-    m_dynamicProperties.angularVelocity = storage.get<Ogre::Vector3>("angularVelocity", Ogre::Vector3::ZERO);*/
+    Component::load(storage);
+    m_collisionCallbackKey = storage.get<std::string>("collisionCallbackKey","");
 }
 
 
 StorageContainer
 CollisionHandlerComponent::storage() const {
     StorageContainer storage = Component::storage();
-    /*// Static
-    storage.set<StorageContainer>("shape", m_properties.shape->storage());
-    storage.set<Ogre::Vector3>("linearFactor", m_properties.linearFactor);
-    storage.set<bool>("hasContactResponse", m_properties.hasContactResponse);
-    storage.set<bool>("kinematic", m_properties.kinematic);
-    // Dynamic
-    storage.set<Ogre::Vector3>("position", m_dynamicProperties.position);
-    storage.set<Ogre::Vector3>("angularVelocity", m_dynamicProperties.angularVelocity);*/
+    storage.set<std::string>("collisionCallbackKey", m_collisionCallbackKey);
     return storage;
 }
 
@@ -85,7 +69,6 @@ struct CollisionSystem::Implementation {
 CollisionSystem::CollisionSystem()
   : m_impl(new Implementation())
 {
-    CollisionSystem::registerCollisionCallback("microbe_message", [](EntityId, EntityId){std::cout << "YAYA!!";});
 }
 
 
@@ -117,7 +100,6 @@ CollisionSystem::update(int) {
     int numManifolds = dispatcher->getNumManifolds();
     for (int i=0;i<numManifolds;i++)
     {
-
         btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(i);
         auto objectA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
         auto objectB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
@@ -133,7 +115,6 @@ CollisionSystem::update(int) {
             {
                 callback(entityId1, entityId2);
             }
-
         }
         componentPtr = System::engine()->entityManager().getComponent(entityId2, CollisionHandlerComponent::TYPE_ID);
         if (componentPtr)
@@ -145,7 +126,6 @@ CollisionSystem::update(int) {
             {
                 callback(entityId2, entityId1);
             }
-
         }
         contactManifold->clearManifold();
     }

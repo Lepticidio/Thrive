@@ -8,6 +8,7 @@
 #include "ogre/scene_node_system.h"
 #include "scripting/luabind.h"
 #include "util/random.h"
+#include "bullet/collision_system.h"
 
 #include <OgreEntity.h>
 #include <OgreSceneManager.h>
@@ -454,6 +455,42 @@ AgentAbsorberSystem::init(
     m_impl->m_absorbers.setEntityManager(&engine->entityManager());
     m_impl->m_agents.setEntityManager(&engine->entityManager());
     m_impl->m_world = engine->physicsWorld();
+
+
+    CollisionSystem::registerCollisionCallback("absorb_agent",
+        [&](EntityId entityA, EntityId entityB)
+        {
+            AgentAbsorberComponent* absorber = nullptr;
+            AgentComponent* agent = nullptr;
+            if (
+                m_impl->m_agents.containsEntity(entityA) and
+                m_impl->m_absorbers.containsEntity(entityB)
+            ) {
+                agent = std::get<0>(
+                    m_impl->m_agents.entities().at(entityA)
+                );
+                absorber = std::get<0>(
+                    m_impl->m_absorbers.entities().at(entityB)
+                );
+            }
+            else if (
+                m_impl->m_absorbers.containsEntity(entityA) and
+                m_impl->m_agents.containsEntity(entityB)
+            ) {
+                absorber = std::get<0>(
+                    m_impl->m_absorbers.entities().at(entityA)
+                );
+                agent = std::get<0>(
+                    m_impl->m_agents.entities().at(entityB)
+                );
+            }
+            if (agent and absorber and absorber->canAbsorbAgent(agent->m_agentId) and agent->m_timeToLive > 0) {
+                absorber->m_absorbedAgents[agent->m_agentId] += agent->m_potency;
+                agent->m_timeToLive = 0;
+            }
+
+        });
+
 }
 
 
@@ -471,43 +508,6 @@ AgentAbsorberSystem::update(int) {
     for (const auto& entry : m_impl->m_absorbers) {
         AgentAbsorberComponent* absorber = std::get<0>(entry.second);
         absorber->m_absorbedAgents.clear();
-    }
-    auto dispatcher = m_impl->m_world->getDispatcher();
-    int numManifolds = dispatcher->getNumManifolds();
-    for (int i = 0; i < numManifolds; i++) {
-        btPersistentManifold* contactManifold = dispatcher->getManifoldByIndexInternal(i);
-        auto objectA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
-        auto objectB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
-        EntityId entityA = reinterpret_cast<size_t>(objectA->getUserPointer());
-        EntityId entityB = reinterpret_cast<size_t>(objectB->getUserPointer());
-        AgentAbsorberComponent* absorber = nullptr;
-        AgentComponent* agent = nullptr;
-        if (
-            m_impl->m_agents.containsEntity(entityA) and
-            m_impl->m_absorbers.containsEntity(entityB)
-        ) {
-            agent = std::get<0>(
-                m_impl->m_agents.entities().at(entityA)
-            );
-            absorber = std::get<0>(
-                m_impl->m_absorbers.entities().at(entityB)
-            );
-        }
-        else if (
-            m_impl->m_absorbers.containsEntity(entityA) and
-            m_impl->m_agents.containsEntity(entityB)
-        ) {
-            absorber = std::get<0>(
-                m_impl->m_absorbers.entities().at(entityA)
-            );
-            agent = std::get<0>(
-                m_impl->m_agents.entities().at(entityB)
-            );
-        }
-        if (agent and absorber and absorber->canAbsorbAgent(agent->m_agentId) and agent->m_timeToLive > 0) {
-            absorber->m_absorbedAgents[agent->m_agentId] += agent->m_potency;
-            agent->m_timeToLive = 0;
-        }
     }
 }
 

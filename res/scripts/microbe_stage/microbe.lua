@@ -76,7 +76,7 @@ function Microbe.createMicrobeEntity(name)
     rigidBody.properties:touch()
     
     local reactor = CollisionHandlerComponent()
-    reactor.m_collisionCallbackKey = "microbe_message"
+    reactor.collisionCallbackKey = "absorb_agent"
     
     local components = {
         AgentAbsorberComponent(),
