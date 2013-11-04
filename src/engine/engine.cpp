@@ -417,6 +417,7 @@ Engine::luaBindings() {
     using namespace luabind;
     return class_<Engine>("__Engine")
         .def("addGameState", Engine_addGameState)
+        .def("setCurrentGameState", &Engine::setCurrentGameState)
         .def("load", &Engine::load)
         .def("save", &Engine::save)
         .property("componentFactory", &Engine::componentFactory)
