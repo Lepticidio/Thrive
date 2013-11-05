@@ -122,6 +122,14 @@ class OgreAddSceneNodeSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - OgreAddSceneNodeSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -165,6 +173,14 @@ class OgreRemoveSceneNodeSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - OgreRemoveSceneNodeSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -207,6 +223,14 @@ class OgreUpdateSceneNodeSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - OgreUpdateSceneNodeSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

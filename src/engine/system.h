@@ -65,9 +65,20 @@ public:
     Engine*
     engine() const;
 
+    /**
+    * @brief Returns the system's entity manager
+    *
+    * If the system has not been initialized yet, this returns \c nullptr.
+    *
+    */
     EntityManager*
     entityManager() const;
 
+    /**
+    * @brief Returns the system's game state
+    *
+    * If the system has not been initialized yet, this returns \c nullptr.
+    */
     GameState*
     gameState() const;
 

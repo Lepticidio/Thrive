@@ -155,6 +155,14 @@ class TextOverlaySystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - TextOverlaySystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

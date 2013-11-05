@@ -16,6 +16,14 @@ class BulletToOgreSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - BulletToOgreSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

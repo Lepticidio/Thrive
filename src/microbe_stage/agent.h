@@ -281,6 +281,14 @@ class AgentLifetimeSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - AgentLifetimeSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -324,6 +332,14 @@ class AgentMovementSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - AgentMovementSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -367,6 +383,14 @@ class AgentEmitterSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - AgentEmitterSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -383,7 +407,7 @@ public:
     /**
     * @brief Initializes the system
     *
-    * @param engine
+    * @param gameState
     */
     void init(GameState* gameState) override;
 
@@ -411,6 +435,14 @@ class AgentAbsorberSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - AgentAbsorberSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -427,7 +459,7 @@ public:
     /**
     * @brief Initializes the system
     *
-    * @param engine
+    * @param gameState
     */
     void init(GameState* gameState) override;
 

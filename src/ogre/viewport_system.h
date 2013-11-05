@@ -155,6 +155,14 @@ class OgreViewportSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - OgreViewportSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -171,12 +179,23 @@ public:
     /**
     * @brief Initializes the system
     *
-    * @param engine
+    * @param gameState
     */
     void init(GameState* gameState) override;
 
+    /**
+    * @brief Removes this system's viewports from the render window
+    *
+    * Used by GameState::deactivate() to clear the render window for the next
+    * game state.
+    */
     void removeAllViewports();
 
+    /**
+    * @brief Restores this system's viewports in the render window
+    *
+    * Used by GameState::activate().
+    */
     void restoreAllViewports();
 
     /**

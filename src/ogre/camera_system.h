@@ -140,6 +140,14 @@ class OgreCameraSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - OgreCameraSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

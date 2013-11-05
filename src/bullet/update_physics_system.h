@@ -13,6 +13,14 @@ class UpdatePhysicsSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - UpdatePhysicsSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

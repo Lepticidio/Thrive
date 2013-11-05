@@ -178,6 +178,14 @@ class BulletDebugDrawSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - BulletDebugDrawSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

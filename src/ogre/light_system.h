@@ -165,6 +165,14 @@ class OgreLightSystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - OgreLightSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

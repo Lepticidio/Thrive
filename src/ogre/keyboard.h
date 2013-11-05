@@ -93,7 +93,8 @@ public:
     /**
     * @brief Initializes the keyboard
     *
-    * @param engine
+    * @param inputManager
+    *   The input manager to use
     */
     void
     init(

@@ -100,6 +100,12 @@ public:
     ComponentFactory&
     componentFactory();
 
+    /**
+    * @brief Returns the currently active game state
+    *
+    * If no game state has been set yet, returns \c nullptr
+    *
+    */
     GameState*
     currentGameState() const;
 
@@ -119,6 +125,10 @@ public:
     OIS::InputManager*
     inputManager() const;
 
+    /**
+    * @brief Returns the keyboard interface
+    *
+    */
     const Keyboard&
     keyboard() const;
 
@@ -139,6 +149,10 @@ public:
     lua_State*
     luaState();
 
+    /**
+    * @brief Returns the mouse interface
+    *
+    */
     const Mouse&
     mouse() const;
 
@@ -159,6 +173,15 @@ public:
         std::string filename
     );
 
+    /**
+    * @brief Sets the current game state
+    *
+    * Activating a game state that has not been added with addGameState() yet
+    * is an error.
+    *
+    * @param name
+    *   The new game state's id
+    */
     void
     setCurrentGameState(
         std::string name

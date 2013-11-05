@@ -12,6 +12,14 @@ class RenderSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - RenderSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

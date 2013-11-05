@@ -129,6 +129,14 @@ class SkySystem : public System {
     
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - SkySystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

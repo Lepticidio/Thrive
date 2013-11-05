@@ -314,6 +314,14 @@ class RigidBodyInputSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - RigidBodyInputSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 
@@ -365,6 +373,14 @@ class RigidBodyOutputSystem : public System {
 
 public:
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes:
+    * - RigidBodyOutputSystem()
+    *
+    * @return 
+    */
     static luabind::scope
     luaBindings();
 

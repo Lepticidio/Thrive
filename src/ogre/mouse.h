@@ -51,7 +51,8 @@ public:
     /**
     * @brief Initializes the mouse
     *
-    * @param engine
+    * @param inputManager
+    *   The input manager to use
     */
     void
     init(
