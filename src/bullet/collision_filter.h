@@ -1,22 +1,29 @@
 #pragma once
 
-#include "engine/collision_system.h"
-
-#include <assert.h>
-#include <set>
-#include <pair>
+#include "bullet/collision_system.h"
 
 #include <iostream>
+#include <string>
 
+#include <assert.h>
+#include "engine/entity.h"
+#include <unordered_set>
+#include <utility>
+
+#include "util/pair_hash.h"
+
+namespace thrive {
+
+class CollisionSystem;
 
 /**
 * @brief Filters for entities that contain specific components
 *
 * An entity filter helps a system in finding the entities that have exactly
-* the right components to be relevant for the system. 
+* the right components to be relevant for the system.
 *
 * @tparam ComponentTypes
-*   The component classes to watch for. You can wrap a class with the 
+*   The component classes to watch for. You can wrap a class with the
 *   Optional template if you want to know if it's there, but it's not
 *   required.
 *
@@ -25,7 +32,7 @@
 * class MySystem : public System {
 *
 * private:
-*   
+*
 *   EntityFilter<
 *       MyComponent,
 *       Optional<SomeOtherComponent>
@@ -75,16 +82,16 @@ public:
     *   If you don't clear them regularly, it's a memory leak.
     *   You can use EntityFilter::clearChanges() to clear both collections.
     */
-    EntityFilter(
+    CollisionFilter(
         const std::string& collisionGroup1,
         const std::string& collisionGroup2,
-        CollisionSystem& collisionSystem
+        CollisionSystem* collisionSystem
     );
 
     /**
     * @brief Destructor
     */
-    ~EntityFilter() = default;
+    ~CollisionFilter() = default;
 
     /**
     * @brief Returns the entities added to this filter
@@ -93,14 +100,17 @@ public:
     * it.
     *
     */
-    std::set<std::pair<EntityId, EntityId>>&
-    collsions();
+    std::unordered_set<std::pair<EntityId, EntityId>>&
+    collisions();
 
     /**
     * @brief Clears the lists for added and removed entities
     */
     void
     clearCollisions();
+
+    void
+    addCollision(std::pair<EntityId, EntityId> collision);
 
     /**
     * @brief Iterator
@@ -112,7 +122,7 @@ public:
     *
     * @return An iterator to the first relevant entity
     */
-    typename std::set<std::pair<EntityId, EntityId>>::const_iterator
+    typename std::unordered_set<std::pair<EntityId, EntityId>>::const_iterator
     begin() const;
 
     /**
@@ -125,9 +135,9 @@ public:
     *
     * @return An iterator to the end of the relevant entities
     */
-    typename std::set<std::pair<EntityId, EntityId>>::const_iterator
+    typename std::unordered_set<std::pair<EntityId, EntityId>>::const_iterator
     end() const;
-    
+
     /**
     * @brief Sets the entity manager this filter applies to
     *
@@ -137,15 +147,17 @@ public:
     */
     void
     setCollisionSystem(
-        CollisionSystem& collisionSystem
+        CollisionSystem* collisionSystem
     );
-    
+
     std::pair<const std::string&, const std::string&>
-    getCollisionSignature();
+    getCollisionSignature() const;
 
 private:
 
     struct Implementation;
     std::unique_ptr<Implementation> m_impl;
-    
+
 };
+
+}

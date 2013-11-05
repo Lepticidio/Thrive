@@ -1,9 +1,11 @@
 #pragma once
 
 #include "engine/component.h"
-#include "engine/system.h"
 #include "engine/entity.h"
+#include "engine/system.h"
+#include "bullet/collision_filter.h"
 
+#include <vector>
 #include <iostream>
 
 namespace luabind {
@@ -11,6 +13,8 @@ class scope;
 }
 
 namespace thrive {
+
+class CollisionFilter;
 
 /**
 * @brief A component for a collision reactive entity
@@ -33,6 +37,13 @@ public:
     static luabind::scope
     luaBindings();
 
+    void
+    addCollisionGroup(
+        const std::string& group
+    );
+
+    const std::vector<std::string>&
+    getCollisionGroups();
 
     /**
     * @brief Loads the component
@@ -63,7 +74,7 @@ public:
 
 private:
 
-    std::vector<std::string> collisionGroups;
+    std::vector<std::string> m_collisionGroups;
 
 };
 
@@ -133,14 +144,9 @@ public:
     * @brief Register a collision filter.
     *
     *  Once a collision filter is registered it will automatically receive new relevant collisions.
-    *  Throws std::invalid_argument if key is already registered.
-    *  Throws std::bad_function_call if called after game has started running.
     *
-    * @param key
-    *   The string key to be used for reference to the callback
-    *
-    * @param callback
-    *   The function to call. Full type is std::function<void (Entity& self, Entity& opponent)>.
+    * @param collisionFilter
+    *   The filter to register
     */
     void
     registerCollisionFilter(
