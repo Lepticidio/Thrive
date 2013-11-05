@@ -445,7 +445,7 @@ Engine::addGameState(
     assert(m_impl->m_gameStates.find(name) == m_impl->m_gameStates.end() && "Duplicate GameState name");
     m_impl->m_gameStates.insert(std::make_pair(
         name, 
-        make_unique<GameState>(*this, name, std::move(systems))
+        std::unique_ptr<GameState>(new GameState(*this, name, std::move(systems)))
     ));
 }
 

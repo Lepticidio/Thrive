@@ -27,12 +27,6 @@ public:
     static luabind::scope
     luaBindings();
 
-    GameState(
-        Engine& engine,
-        std::string name,
-        std::vector<std::unique_ptr<System>> systems
-    );
-
     GameState(const GameState&) = delete;
 
     ~GameState();
@@ -97,6 +91,14 @@ public:
     );
 
 private:
+
+    friend class Engine;
+
+    GameState(
+        Engine& engine,
+        std::string name,
+        std::vector<std::unique_ptr<System>> systems
+    );
 
     struct Implementation;
     std::unique_ptr<Implementation> m_impl;
