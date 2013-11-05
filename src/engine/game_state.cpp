@@ -203,6 +203,9 @@ GameState::setPhysicsDebugDrawingEnabled(
 
 void
 GameState::shutdown() {
+    for (const auto& system : m_impl->m_systems) {
+        system->shutdown();
+    }
     m_impl->m_physics.world.reset();
     m_impl->m_engine.ogreRoot()->destroySceneManager(
         m_impl->m_sceneManager
