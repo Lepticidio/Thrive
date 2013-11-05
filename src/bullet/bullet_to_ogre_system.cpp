@@ -4,8 +4,19 @@
 #include "engine/game_state.h"
 #include "engine/entity_filter.h"
 #include "ogre/scene_node_system.h"
+#include "scripting/luabind.h"
 
 using namespace thrive;
+
+
+luabind::scope
+BulletToOgreSystem::luaBindings() {
+    using namespace luabind;
+    return class_<BulletToOgreSystem, System>("BulletToOgreSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct BulletToOgreSystem::Implementation {
 

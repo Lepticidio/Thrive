@@ -108,6 +108,15 @@ REGISTER_COMPONENT(OgreLightComponent)
 // OgreLightSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+OgreLightSystem::luaBindings() {
+    using namespace luabind;
+    return class_<OgreLightSystem, System>("OgreLightSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct OgreLightSystem::Implementation {
 
     EntityFilter<

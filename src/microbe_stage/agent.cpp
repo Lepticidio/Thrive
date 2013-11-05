@@ -214,6 +214,15 @@ REGISTER_COMPONENT(AgentAbsorberComponent)
 // AgentLifetimeSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+AgentLifetimeSystem::luaBindings() {
+    using namespace luabind;
+    return class_<AgentLifetimeSystem, System>("AgentLifetimeSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct AgentLifetimeSystem::Implementation {
 
     EntityFilter<
@@ -263,6 +272,15 @@ AgentLifetimeSystem::update(int milliseconds) {
 // AgentMovementSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+AgentMovementSystem::luaBindings() {
+    using namespace luabind;
+    return class_<AgentMovementSystem, System>("AgentMovementSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct AgentMovementSystem::Implementation {
 
     EntityFilter<
@@ -311,6 +329,15 @@ AgentMovementSystem::update(int milliseconds) {
 ////////////////////////////////////////////////////////////////////////////////
 // AgentEmitterSystem
 ////////////////////////////////////////////////////////////////////////////////
+
+luabind::scope
+AgentEmitterSystem::luaBindings() {
+    using namespace luabind;
+    return class_<AgentEmitterSystem, System>("AgentEmitterSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct AgentEmitterSystem::Implementation {
 
@@ -420,6 +447,15 @@ AgentEmitterSystem::update(int milliseconds) {
 ////////////////////////////////////////////////////////////////////////////////
 // AgentAbsorberSystem
 ////////////////////////////////////////////////////////////////////////////////
+
+luabind::scope
+AgentAbsorberSystem::luaBindings() {
+    using namespace luabind;
+    return class_<AgentAbsorberSystem, System>("AgentAbsorberSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct AgentAbsorberSystem::Implementation {
 

@@ -13,6 +13,9 @@ class UpdatePhysicsSystem : public System {
 
 public:
 
+    static luabind::scope
+    luaBindings();
+
     /**
     * @brief Constructor
     */

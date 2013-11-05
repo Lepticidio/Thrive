@@ -155,6 +155,9 @@ class OgreViewportSystem : public System {
     
 public:
 
+    static luabind::scope
+    luaBindings();
+
     /**
     * @brief Constructor
     */

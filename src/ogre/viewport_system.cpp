@@ -106,6 +106,15 @@ REGISTER_COMPONENT(OgreViewportComponent)
 ////////////////////////////////////////////////////////////////////////////////
 
 
+luabind::scope
+OgreViewportSystem::luaBindings() {
+    using namespace luabind;
+    return class_<OgreViewportSystem, System>("OgreViewportSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct OgreViewportSystem::Implementation {
 
     EntityFilter<OgreViewportComponent> m_entities = {true};

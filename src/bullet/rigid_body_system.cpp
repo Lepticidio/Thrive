@@ -165,6 +165,15 @@ REGISTER_COMPONENT(RigidBodyComponent)
 // RigidBodyInputSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+RigidBodyInputSystem::luaBindings() {
+    using namespace luabind;
+    return class_<RigidBodyInputSystem, System>("RigidBodyInputSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct RigidBodyInputSystem::Implementation {
 
     EntityFilter<
@@ -316,6 +325,15 @@ RigidBodyInputSystem::update(int milliseconds) {
 ////////////////////////////////////////////////////////////////////////////////
 // RigidBodyOutputSystem
 ////////////////////////////////////////////////////////////////////////////////
+
+luabind::scope
+RigidBodyOutputSystem::luaBindings() {
+    using namespace luabind;
+    return class_<RigidBodyOutputSystem, System>("RigidBodyOutputSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct RigidBodyOutputSystem::Implementation {
 

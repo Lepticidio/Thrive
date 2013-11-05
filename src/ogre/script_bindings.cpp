@@ -6,6 +6,7 @@
 #include "ogre/keyboard.h"
 #include "ogre/light_system.h"
 #include "ogre/mouse.h"
+#include "ogre/render_system.h"
 #include "ogre/scene_node_system.h"
 #include "ogre/script_bindings.h"
 #include "ogre/sky_system.h"
@@ -512,11 +513,21 @@ thrive::OgreBindings::luaBindings() {
         OgreCameraComponent::luaBindings(),
         OgreLightComponent::luaBindings(),
         OgreSceneNodeComponent::luaBindings(),
+        OgreViewportComponent::luaBindings(),
         SkyPlaneComponent::luaBindings(),
         TextOverlayComponent::luaBindings(),
+        // Systems
+        OgreAddSceneNodeSystem::luaBindings(),
+        OgreCameraSystem::luaBindings(),
+        OgreLightSystem::luaBindings(),
+        OgreRemoveSceneNodeSystem::luaBindings(),
+        OgreUpdateSceneNodeSystem::luaBindings(),
+        OgreViewportSystem::luaBindings(),
+        thrive::RenderSystem::luaBindings(), // Fully qualified because of Ogre::RenderSystem
+        SkySystem::luaBindings(),
+        TextOverlaySystem::luaBindings(),
         // Other
         Keyboard::luaBindings(),
-        Mouse::luaBindings(),
-        OgreViewportComponent::luaBindings()
+        Mouse::luaBindings()
     );
 }

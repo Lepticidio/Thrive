@@ -84,6 +84,15 @@ REGISTER_COMPONENT(SkyPlaneComponent)
 // SkySystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+SkySystem::luaBindings() {
+    using namespace luabind;
+    return class_<SkySystem, System>("SkySystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct SkySystem::Implementation {
 
     Ogre::SceneManager* m_sceneManager = nullptr;

@@ -2,6 +2,10 @@
 
 #include "engine/system.h"
 
+namespace luabind {
+    class scope;
+}
+
 namespace thrive {
 
 /**
@@ -11,6 +15,9 @@ namespace thrive {
 class BulletToOgreSystem : public System {
 
 public:
+
+    static luabind::scope
+    luaBindings();
 
     /**
     * @brief Constructor

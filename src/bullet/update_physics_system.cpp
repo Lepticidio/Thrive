@@ -1,12 +1,22 @@
 #include "bullet/update_physics_system.h"
 
 #include "engine/game_state.h"
+#include "scripting/luabind.h"
 
 #include <assert.h>
 #include <btBulletDynamicsCommon.h>
 
 
 using namespace thrive;
+
+luabind::scope
+UpdatePhysicsSystem::luaBindings() {
+    using namespace luabind;
+    return class_<UpdatePhysicsSystem, System>("UpdatePhysicsSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct UpdatePhysicsSystem::Implementation {
 

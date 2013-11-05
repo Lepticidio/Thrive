@@ -129,6 +129,9 @@ class SkySystem : public System {
     
 public:
 
+    static luabind::scope
+    luaBindings();
+
     /**
     * @brief Constructor
     */

@@ -102,6 +102,15 @@ REGISTER_COMPONENT(OgreSceneNodeComponent)
 // OgreAddSceneNodeSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+OgreAddSceneNodeSystem::luaBindings() {
+    using namespace luabind;
+    return class_<OgreAddSceneNodeSystem, System>("OgreAddSceneNodeSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct OgreAddSceneNodeSystem::Implementation {
 
     Ogre::SceneManager* m_sceneManager = nullptr;
@@ -171,6 +180,15 @@ OgreAddSceneNodeSystem::update(int) {
 ////////////////////////////////////////////////////////////////////////////////
 // OgreRemoveSceneNodeSystem
 ////////////////////////////////////////////////////////////////////////////////
+
+luabind::scope
+OgreRemoveSceneNodeSystem::luaBindings() {
+    using namespace luabind;
+    return class_<OgreRemoveSceneNodeSystem, System>("OgreRemoveSceneNodeSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct OgreRemoveSceneNodeSystem::Implementation {
 
@@ -242,6 +260,15 @@ OgreRemoveSceneNodeSystem::update(int) {
 ////////////////////////////////////////////////////////////////////////////////
 // OgreUpdateSceneNodeSystem
 ////////////////////////////////////////////////////////////////////////////////
+
+luabind::scope
+OgreUpdateSceneNodeSystem::luaBindings() {
+    using namespace luabind;
+    return class_<OgreUpdateSceneNodeSystem, System>("OgreUpdateSceneNodeSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct OgreUpdateSceneNodeSystem::Implementation {
 

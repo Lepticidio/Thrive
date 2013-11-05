@@ -155,6 +155,9 @@ class TextOverlaySystem : public System {
     
 public:
 
+    static luabind::scope
+    luaBindings();
+
     /**
     * @brief Constructor
     */

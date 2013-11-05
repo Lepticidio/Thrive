@@ -2,10 +2,20 @@
 
 #include "engine/engine.h"
 #include "engine/game_state.h"
+#include "scripting/luabind.h"
 
 #include <OgreRoot.h>
 
 using namespace thrive;
+
+luabind::scope
+RenderSystem::luaBindings() {
+    using namespace luabind;
+    return class_<RenderSystem, System>("RenderSystem")
+        .def(constructor<>())
+    ;
+}
+
 
 struct RenderSystem::Implementation {
 

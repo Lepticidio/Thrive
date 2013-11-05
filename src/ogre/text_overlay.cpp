@@ -111,6 +111,15 @@ REGISTER_COMPONENT(TextOverlayComponent)
 // TextOverlaySystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+TextOverlaySystem::luaBindings() {
+    using namespace luabind;
+    return class_<TextOverlaySystem, System>("TextOverlaySystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct TextOverlaySystem::Implementation {
 
     Implementation() {

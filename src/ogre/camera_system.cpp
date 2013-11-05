@@ -109,6 +109,15 @@ REGISTER_COMPONENT(OgreCameraComponent)
 // OgreCameraSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+luabind::scope
+OgreCameraSystem::luaBindings() {
+    using namespace luabind;
+    return class_<OgreCameraSystem, System>("OgreCameraSystem")
+        .def(constructor<>())
+    ;
+}
+
+
 struct OgreCameraSystem::Implementation {
 
     std::unordered_map<EntityId, Ogre::Camera*> m_cameras;

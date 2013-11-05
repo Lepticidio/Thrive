@@ -281,6 +281,9 @@ class AgentLifetimeSystem : public System {
 
 public:
 
+    static luabind::scope
+    luaBindings();
+
     /**
     * @brief Constructor
     */
@@ -320,6 +323,9 @@ private:
 class AgentMovementSystem : public System {
 
 public:
+
+    static luabind::scope
+    luaBindings();
 
     /**
     * @brief Constructor
@@ -361,6 +367,9 @@ class AgentEmitterSystem : public System {
 
 public:
 
+    static luabind::scope
+    luaBindings();
+
     /**
     * @brief Constructor
     */
@@ -401,6 +410,9 @@ private:
 class AgentAbsorberSystem : public System {
 
 public:
+
+    static luabind::scope
+    luaBindings();
 
     /**
     * @brief Constructor
