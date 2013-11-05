@@ -1,9 +1,4 @@
-Engine:setPhysicsDebugDrawingEnabled(true)
-
-ADD_SYSTEM(MicrobeSystem)
-ADD_SYSTEM(MicrobeCameraSystem)
-ADD_SYSTEM(MicrobeControlSystem)
-ADD_SYSTEM(HudSystem)
+--Engine:setPhysicsDebugDrawingEnabled(true)
 
 local function setupBackground()
     local entity = Entity("background")
@@ -125,6 +120,40 @@ local function setupEmitter()
 end
 
 
+local function setupGameState()
+    GameState.MICROBE = "microbe"
+    Engine:addGameState(
+        GameState.MICROBE,
+        {
+            -- Microbe specific
+            MicrobeSystem(),
+            MicrobeCameraSystem(),
+            MicrobeControlSystem(),
+            HudSystem(),
+            AgentLifetimeSystem(),
+            AgentMovementSystem(),
+            AgentEmitterSystem(),
+            AgentAbsorberSystem(),
+            -- Physics
+            RigidBodyInputSystem(),
+            UpdatePhysicsSystem(),
+            RigidBodyOutputSystem(),
+            BulletToOgreSystem(),
+            -- Graphics
+            OgreAddSceneNodeSystem(),
+            OgreUpdateSceneNodeSystem(),
+            OgreCameraSystem(),
+            OgreLightSystem(),
+            SkySystem(),
+            TextOverlaySystem(),
+            OgreViewportSystem(),
+            OgreRemoveSceneNodeSystem(),
+            RenderSystem(),
+        }
+    )
+end
+
+
 local function setupHud()
     local ENERGY_WIDTH = 200
     local ENERGY_HEIGHT = 32
@@ -199,9 +228,13 @@ local function setupPlayer()
     player:addOrganelle(1, -1, storageOrganelle4)
 end
 
+setupGameState()
+Engine:setCurrentGameState(GameState.MICROBE)
+
 setupBackground()
 setupCamera()
 setupAgents()
 setupEmitter()
 setupHud()
 setupPlayer()
+
