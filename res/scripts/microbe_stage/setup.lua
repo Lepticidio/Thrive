@@ -125,6 +125,7 @@ local function setupGameState()
     Engine:addGameState(
         GameState.MICROBE,
         {
+            QuickSaveSystem(),
             -- Microbe specific
             MicrobeSystem(),
             MicrobeCameraSystem(),

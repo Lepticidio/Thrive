@@ -554,6 +554,9 @@ void
 Engine::update(
     int milliseconds
 ) {
+    if (not m_impl->m_serialization.saveFile.empty()) {
+        m_impl->saveSavegame();
+    }
     Ogre::WindowEventUtilities::messagePump();
     if (m_impl->quitRequested()) {
         Game::instance().quit();
@@ -562,5 +565,8 @@ Engine::update(
     m_impl->m_input.mouse.update();
     assert(m_impl->m_currentGameState != nullptr);
     m_impl->m_currentGameState->update(milliseconds);
+    if (not m_impl->m_serialization.loadFile.empty()) {
+        m_impl->loadSavegame();
+    }
 }
 
