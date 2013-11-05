@@ -6,10 +6,13 @@
 #include "scripting/luabind.h"
 
 #include <unordered_map>
+#include <unordered_multimap>
 #include "bullet/rigid_body_system.h"
 #include "engine/serialization.h"
 #include "engine/entity_manager.h"
 #include "engine/entity.h"
+#include "bullet/collision_filter"
+
 
 using namespace thrive;
 
@@ -63,6 +66,7 @@ struct CollisionSystem::Implementation {
 
     btDiscreteDynamicsWorld* m_world = nullptr;
 
+    std::unordered_multimap m_collisionFilterMap(16);
 };
 
 
@@ -139,3 +143,11 @@ CollisionSystem::registerCollisionCallback(
 ) {
     callbackFunctions[key] = callback;
 }
+
+void
+registerCollisionFilter(
+    CollisionFilter& collisionFilter
+) {
+    m_impl->m_collisionFilterMap.insert({getCollisionSignature, collisionFilter});
+}
+

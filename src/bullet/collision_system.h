@@ -16,25 +16,7 @@ namespace thrive {
 * @brief A component for a collision reactive entity
 */
 class CollisionHandlerComponent : public Component {
-        public:
-
-        static const ComponentTypeId TYPE_ID;
-
-        ComponentTypeId typeId() const override {
-            return TYPE_ID;
-        }
-
-        static const std::string& TYPE_NAME() {
-            static std::string string("CollisionHandlerComponent");
-            return string;
-        }
-
-        std::string typeName() const override {
-            return TYPE_NAME();
-        }
-
-    private:
-
+    COMPONENT(CollisionHandlerComponent)
 
 public:
 
@@ -78,6 +60,11 @@ public:
     *   Call CollisionSystem::registerCollisionCallback(key, function<void (Entity& 1, Entity& 2)>) before game is fully initialized to register your callback.
     */
     std::string m_collisionCallbackKey = "";
+
+private:
+
+    std::vector<std::string> collisionGroups;
+
 };
 
 
@@ -101,7 +88,9 @@ public:
     *
     * @param engine
     */
-    void init(Engine* engine) override;
+    void init(
+        Engine* engine
+    ) override;
 
     /**
     * @brief Shuts the system down
@@ -113,7 +102,9 @@ public:
     *
     * @param milliSeconds
     */
-    void update(int milliSeconds) override;
+    void update(
+        int milliSeconds
+    ) override;
 
     /**
     * @brief Typedef for collision callback function type and signature
@@ -133,7 +124,28 @@ public:
     * @param callback
     *   The function to call. Full type is std::function<void (Entity& self, Entity& opponent)>.
     */
-    static void registerCollisionCallback(const std::string& key, CollisionCallback callback);
+    static void registerCollisionCallback(
+        const std::string& key,
+        CollisionCallback callback
+    );
+
+    /**
+    * @brief Register a collision filter.
+    *
+    *  Once a collision filter is registered it will automatically receive new relevant collisions.
+    *  Throws std::invalid_argument if key is already registered.
+    *  Throws std::bad_function_call if called after game has started running.
+    *
+    * @param key
+    *   The string key to be used for reference to the callback
+    *
+    * @param callback
+    *   The function to call. Full type is std::function<void (Entity& self, Entity& opponent)>.
+    */
+    void
+    registerCollisionFilter(
+        CollisionFilter& collisionFilter
+    );
 
 private:
 
