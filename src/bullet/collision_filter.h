@@ -12,7 +12,12 @@
 
 #include "util/pair_hash.h"
 
+namespace luabind {
+class scope;
+}
+
 namespace thrive {
+
 
 class CollisionSystem;
 
@@ -92,6 +97,14 @@ public:
 
     ~CollisionFilter()= default;
 
+    /**
+    * @brief Lua bindings
+    *
+    * Exposes the following \b constructors:
+    * - \c Entity(string): Entity(const std::string&, const std::string&, CollisionSystem*)
+    */
+    static luabind::scope
+    luaBindings();
 
     /**
     * @brief Returns the entities added to this filter
@@ -150,8 +163,16 @@ public:
         CollisionSystem* collisionSystem
     );
 
+    /**
+    * @brief Returns the signature of the collision filter
+    *
+    * @return
+    *   A pair of the two collision group strings.
+    */
     std::pair<const std::string&, const std::string&>
     getCollisionSignature() const;
+
+
 
 private:
 

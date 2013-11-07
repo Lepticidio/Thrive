@@ -1,9 +1,10 @@
 #include "bullet/script_bindings.h"
 
 #include "bullet/bullet_ogre_conversion.h"
+#include "bullet/collision_filter.h"
 #include "bullet/collision_shape.h"
-#include "bullet/rigid_body_system.h"
 #include "bullet/collision_system.h"
+#include "bullet/rigid_body_system.h"
 #include "scripting/luabind.h"
 
 
@@ -26,7 +27,8 @@ thrive::BulletBindings::luaBindings() {
         EmptyShape::luaBindings(),
         SphereShape::luaBindings(),
         RigidBodyComponent::luaBindings(),
-        CollisionHandlerComponent::luaBindings()
+        CollisionHandlerComponent::luaBindings(),
+        CollisionFilter::luaBindings()
     );
 }
 

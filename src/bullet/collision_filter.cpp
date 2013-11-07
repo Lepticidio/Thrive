@@ -1,4 +1,5 @@
 #include "collision_filter.h"
+#include "scripting/luabind.h"
 
 using namespace thrive;
 
@@ -26,6 +27,15 @@ struct CollisionFilter::Implementation {
 };
 
 
+luabind::scope
+CollisionFilter::luaBindings() {
+    using namespace luabind;
+    return class_<CollisionFilter>("CollisionFilter")
+        .def(constructor<const std::string&, const std::string&, CollisionSystem*>())
+    ;
+}
+
+
 CollisionFilter::CollisionFilter(
     const std::string& collisionGroup1,
     const std::string& collisionGroup2,
@@ -41,12 +51,14 @@ CollisionFilter::collisions() {
     return m_impl->m_collisions;
 }
 
+
 void
 CollisionFilter::addCollision(
     Collision collision
 ) {
     m_impl->m_collisions.insert(collision);
 }
+
 
 typename std::unordered_set<Collision>::const_iterator
 CollisionFilter::begin() const {
@@ -75,8 +87,8 @@ CollisionFilter::setCollisionSystem(
     collisionSystem->registerCollisionFilter(*this);
 }
 
+
 std::pair<const std::string&, const std::string&>
 CollisionFilter::getCollisionSignature() const {
     return std::pair<const std::string&, const std::string&>(m_impl->m_collisionGroup1, m_impl->m_collisionGroup2);
 }
-

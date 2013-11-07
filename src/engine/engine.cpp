@@ -423,6 +423,7 @@ Engine::luaBindings() {
         .property("keyboard", &Engine::keyboardSystem)
         .property("mouse", &Engine::mouseSystem)
         .property("sceneManager", &Engine::sceneManager)
+        .property("collisionSystem", &Engine::collisionSystem)
     ;
 }
 

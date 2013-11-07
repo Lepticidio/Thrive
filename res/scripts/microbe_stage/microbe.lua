@@ -402,6 +402,7 @@ function MicrobeSystem:__init()
         }, 
         true
     )
+    self.testFilter = CollisionFilter("microbe","agent", self:engine():m_collisionSystem)
     self.microbes = {}
 end
 

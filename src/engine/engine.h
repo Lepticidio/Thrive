@@ -55,6 +55,7 @@ public:
     * - Engine::keyboard() (as property)
     * - Engine::mouse() (as property)
     * - Engine::sceneManager() (as property)
+    * - Engine::collisionSystem() (as property)
     *
     * @return
     */
