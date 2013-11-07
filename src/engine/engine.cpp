@@ -79,6 +79,7 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
         m_loadSystem(std::make_shared<LoadSystem>()),
         m_saveSystem(std::make_shared<SaveSystem>()),
         m_scriptSystemUpdater(std::make_shared<ScriptSystemUpdater>()),
+        m_collisionSystem(std::make_shared<CollisionSystem>()),
         m_viewportSystem(std::make_shared<OgreViewportSystem>())
     {
         m_loadSystem->setActive(false);
@@ -285,8 +286,8 @@ struct Engine::Implementation : public Ogre::WindowEventListener {
             std::make_shared<UpdatePhysicsSystem>(),
             std::make_shared<RigidBodyOutputSystem>(),
             std::make_shared<BulletToOgreSystem>(),
-            std::make_shared<CollisionSystem>(),
             m_physics.debugDrawSystem,
+            m_collisionSystem,
             // Graphics
             std::make_shared<OgreAddSceneNodeSystem>(),
             std::make_shared<OgreUpdateSceneNodeSystem>(),

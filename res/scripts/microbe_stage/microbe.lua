@@ -75,14 +75,14 @@ function Microbe.createMicrobeEntity(name)
     rigidBody.properties.angularFactor = Vector3(0, 0, 1)
     rigidBody.properties:touch()
     
-    local reactor = CollisionHandlerComponent()
-    reactor.collisionCallbackKey = "absorb_agent"
+    local reactionHandler = CollisionHandlerComponent()
+    reactionHandler:addCollisionGroup("microbe")
     
     local components = {
         AgentAbsorberComponent(),
         OgreSceneNodeComponent(),
         MicrobeComponent(),
-        reactor,
+        reactionHandler,
         rigidBody
     }
     for _, component in ipairs(components) do

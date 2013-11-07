@@ -32,7 +32,7 @@ CollisionHandlerComponent::luaBindings() {
             def("TYPE_NAME", &CollisionHandlerComponent::TYPE_NAME)
         ]
         .def(constructor<>())
-        .def_readwrite("collisionCallbackKey", &CollisionHandlerComponent::m_collisionCallbackKey)
+        .def("addCollisionGroup", &CollisionHandlerComponent::addCollisionGroup)
     ;
 }
 
@@ -53,14 +53,12 @@ CollisionHandlerComponent::load(
     const StorageContainer& storage
 ) {
     Component::load(storage);
-    m_collisionCallbackKey = storage.get<std::string>("collisionCallbackKey","");
 }
 
 
 StorageContainer
 CollisionHandlerComponent::storage() const {
     StorageContainer storage = Component::storage();
-    storage.set<std::string>("collisionCallbackKey", m_collisionCallbackKey);
     return storage;
 }
 
@@ -106,10 +104,6 @@ CollisionSystem::shutdown() {
     System::shutdown();
 }
 
-using CollisionCallback = std::function<void (EntityId selfId, EntityId opponentId)>;
-
-static std::unordered_map<std::string, CollisionCallback> callbackFunctions;
-
 void
 CollisionSystem::update(int) {
 
@@ -127,7 +121,7 @@ CollisionSystem::update(int) {
                                             System::engine()->entityManager().getComponent(entityId1, CollisionHandlerComponent::TYPE_ID)
                                         );
         CollisionHandlerComponent* collisionComponent2 = static_cast<CollisionHandlerComponent*>(
-                                            System::engine()->entityManager().getComponent(entityId1, CollisionHandlerComponent::TYPE_ID)
+                                            System::engine()->entityManager().getComponent(entityId2, CollisionHandlerComponent::TYPE_ID)
                                         );
 
         if (collisionComponent1 && collisionComponent2)
@@ -135,58 +129,25 @@ CollisionSystem::update(int) {
             std::vector<std::string> collisionGroups1 = collisionComponent1->getCollisionGroups();
             std::vector<std::string> collisionGroups2 = collisionComponent2->getCollisionGroups();
             std::vector<std::pair<std::string, std::string>> collisionGroupPermutations(collisionGroups1.size() * collisionGroups2.size());
-
             for(std::string collisionGroup1 : collisionGroups1)
             {
-                for(std::string collisionGroup2 : collisionGroups1)
+                for(std::string collisionGroup2 : collisionGroups2)
                 {
                     collisionGroupPermutations.push_back(std::pair<std::string, std::string>(collisionGroup1, collisionGroup2));
                 }
             }
             for(std::pair<std::string, std::string> collisionGroup : collisionGroupPermutations)
             {
-                auto filterIterators = m_impl->m_collisionFilterMap.equal_range(collisionGroup);
+
+                auto filterIterators = m_impl->m_collisionFilterMap.equal_range(collisionGroup);//Get iterators for group of relevant CollisionFilters
                 for(auto it = filterIterators.first; it != filterIterators.second; ++it)        // Foreach CollisionFilter object
                 {
                     it->second.addCollision(std::pair<EntityId, EntityId>(entityId1, entityId2));
                 }
             }
         }
-
-
-/*
-        if (componentPtr)
-        {
-            CollisionCallback callback = callbackFunctions[static_cast<CollisionHandlerComponent*>(
-                                            componentPtr
-                                        )->m_collisionCallbackKey];
-            if (callback != nullptr)
-            {
-                callback(entityId1, entityId2);
-            }
-        }
-        componentPtr = System::engine()->entityManager().getComponent(entityId2, CollisionHandlerComponent::TYPE_ID);
-        if (componentPtr)
-        {
-            CollisionCallback callback = callbackFunctions[static_cast<CollisionHandlerComponent*>(
-                                            componentPtr
-                                        )->m_collisionCallbackKey];
-            if (callback != nullptr)
-            {
-                callback(entityId2, entityId1);
-            }
-        }*/
         contactManifold->clearManifold();
     }
-}
-
-
-void
-CollisionSystem::registerCollisionCallback(
-    const std::string& key,
-    CollisionCallback callback
-) {
-    callbackFunctions[key] = callback;
 }
 
 void

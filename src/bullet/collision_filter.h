@@ -6,7 +6,7 @@
 #include <string>
 
 #include <assert.h>
-#include "engine/entity.h"
+#include "engine/typedefs.h"
 #include <unordered_set>
 #include <utility>
 
@@ -65,6 +65,7 @@ class CollisionSystem;
 * };
 * \endcode
 */
+
 class CollisionFilter {
 
 public:
@@ -88,10 +89,9 @@ public:
         CollisionSystem* collisionSystem
     );
 
-    /**
-    * @brief Destructor
-    */
-    ~CollisionFilter() = default;
+
+    ~CollisionFilter()= default;
+
 
     /**
     * @brief Returns the entities added to this filter
@@ -100,7 +100,7 @@ public:
     * it.
     *
     */
-    std::unordered_set<std::pair<EntityId, EntityId>>&
+    std::unordered_set<Collision>&
     collisions();
 
     /**
@@ -110,7 +110,7 @@ public:
     clearCollisions();
 
     void
-    addCollision(std::pair<EntityId, EntityId> collision);
+    addCollision(Collision collision);
 
     /**
     * @brief Iterator
@@ -122,7 +122,7 @@ public:
     *
     * @return An iterator to the first relevant entity
     */
-    typename std::unordered_set<std::pair<EntityId, EntityId>>::const_iterator
+    typename std::unordered_set<Collision>::const_iterator
     begin() const;
 
     /**
@@ -135,7 +135,7 @@ public:
     *
     * @return An iterator to the end of the relevant entities
     */
-    typename std::unordered_set<std::pair<EntityId, EntityId>>::const_iterator
+    typename std::unordered_set<Collision>::const_iterator
     end() const;
 
     /**

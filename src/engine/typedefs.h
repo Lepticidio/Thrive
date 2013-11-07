@@ -1,12 +1,15 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 
 namespace thrive {
 
     using ComponentTypeId = uint16_t;
 
     using EntityId = uint32_t;
+
+    using Collision = std::pair<EntityId, EntityId>;
 
     using Milliseconds = int;
 

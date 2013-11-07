@@ -1,15 +1,16 @@
 #include "microbe_stage/agent.h"
 
+#include "bullet/collision_filter.h"
+#include "bullet/collision_system.h"
 #include "bullet/rigid_body_system.h"
 #include "engine/component_factory.h"
 #include "engine/engine.h"
 #include "engine/entity_filter.h"
 #include "engine/serialization.h"
+#include "game.h"
 #include "ogre/scene_node_system.h"
 #include "scripting/luabind.h"
 #include "util/random.h"
-#include "bullet/collision_system.h"
-
 #include <OgreEntity.h>
 #include <OgreSceneManager.h>
 
@@ -402,11 +403,15 @@ AgentEmitterSystem::update(int milliseconds) {
                 agentComponent->m_velocity = emissionVelocity;
                 agentComponent->m_agentId = emitterComponent->m_agentId;
                 agentComponent->m_potency = emitterComponent->m_potencyPerParticle;
+                // Collision handler component
+                auto collisionHandlerComponent = make_unique<CollisionHandlerComponent>();
+                collisionHandlerComponent->addCollisionGroup("agent");
                 // Build component list
                 std::list<std::unique_ptr<Component>> components;
                 components.emplace_back(std::move(agentSceneNodeComponent));
                 components.emplace_back(std::move(agentComponent));
                 components.emplace_back(std::move(agentRigidBodyComponent));
+                components.emplace_back(std::move(collisionHandlerComponent));
                 for (auto& component : components) {
                     entityManager.addComponent(
                         agentEntityId,
@@ -423,7 +428,14 @@ AgentEmitterSystem::update(int milliseconds) {
 // AgentAbsorberSystem
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
+
 struct AgentAbsorberSystem::Implementation {
+
+    Implementation()
+      : m_agentCollisions(new CollisionFilter("microbe", "agent", &Game::instance().engine().collisionSystem()))
+    {
+    }
 
     EntityFilter<
         AgentAbsorberComponent
@@ -434,6 +446,8 @@ struct AgentAbsorberSystem::Implementation {
     > m_agents;
 
     btDiscreteDynamicsWorld* m_world = nullptr;
+
+    CollisionFilter* m_agentCollisions;
 
 };
 
@@ -455,42 +469,6 @@ AgentAbsorberSystem::init(
     m_impl->m_absorbers.setEntityManager(&engine->entityManager());
     m_impl->m_agents.setEntityManager(&engine->entityManager());
     m_impl->m_world = engine->physicsWorld();
-
-
-    CollisionSystem::registerCollisionCallback("absorb_agent",
-        [&](EntityId entityA, EntityId entityB)
-        {
-            AgentAbsorberComponent* absorber = nullptr;
-            AgentComponent* agent = nullptr;
-            if (
-                m_impl->m_agents.containsEntity(entityA) and
-                m_impl->m_absorbers.containsEntity(entityB)
-            ) {
-                agent = std::get<0>(
-                    m_impl->m_agents.entities().at(entityA)
-                );
-                absorber = std::get<0>(
-                    m_impl->m_absorbers.entities().at(entityB)
-                );
-            }
-            else if (
-                m_impl->m_absorbers.containsEntity(entityA) and
-                m_impl->m_agents.containsEntity(entityB)
-            ) {
-                absorber = std::get<0>(
-                    m_impl->m_absorbers.entities().at(entityA)
-                );
-                agent = std::get<0>(
-                    m_impl->m_agents.entities().at(entityB)
-                );
-            }
-            if (agent and absorber and absorber->canAbsorbAgent(agent->m_agentId) and agent->m_timeToLive > 0) {
-                absorber->m_absorbedAgents[agent->m_agentId] += agent->m_potency;
-                agent->m_timeToLive = 0;
-            }
-
-        });
-
 }
 
 
@@ -508,6 +486,40 @@ AgentAbsorberSystem::update(int) {
     for (const auto& entry : m_impl->m_absorbers) {
         AgentAbsorberComponent* absorber = std::get<0>(entry.second);
         absorber->m_absorbedAgents.clear();
+    }
+    for (Collision collision : *m_impl->m_agentCollisions)
+    {
+        EntityId entityA = collision.first;
+        EntityId entityB = collision.second;
+
+        AgentAbsorberComponent* absorber = nullptr;
+        AgentComponent* agent = nullptr;
+        if (
+            m_impl->m_agents.containsEntity(entityA) and
+            m_impl->m_absorbers.containsEntity(entityB)
+        ) {
+            agent = std::get<0>(
+                m_impl->m_agents.entities().at(entityA)
+            );
+            absorber = std::get<0>(
+                m_impl->m_absorbers.entities().at(entityB)
+            );
+        }
+        else if (
+            m_impl->m_absorbers.containsEntity(entityA) and
+            m_impl->m_agents.containsEntity(entityB)
+        ) {
+            absorber = std::get<0>(
+                m_impl->m_absorbers.entities().at(entityA)
+            );
+            agent = std::get<0>(
+                m_impl->m_agents.entities().at(entityB)
+            );
+        }
+        if (agent and absorber and absorber->canAbsorbAgent(agent->m_agentId) and agent->m_timeToLive > 0) {
+            absorber->m_absorbedAgents[agent->m_agentId] += agent->m_potency;
+            agent->m_timeToLive = 0;
+        }
     }
 }
 

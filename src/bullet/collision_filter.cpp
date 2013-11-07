@@ -1,33 +1,8 @@
 #include "collision_filter.h"
 
-namespace thrive {
-
-/*
-template<size_t tupleIndex>
-struct RegisterNextCallback {
-
-    template<typename Filter>
-    static void registerNextCallback(
-        Filter& filter
-    ) {
-        // May the programming gods have mercy for the poor souls
-        // who will have to read this.
-        //
-        // This calls a template function called registerCallback
-        // on the filter object.
-        filter.template registerCallback<tupleIndex-1>();
-    }
-};
-
-template<>
-struct RegisterNextCallback<0> {
-
-    template<typename Filter>
-    static void registerNextCallback(Filter&) {}
-};
+using namespace thrive;
 
 
-*/
 
 struct CollisionFilter::Implementation {
 
@@ -41,7 +16,7 @@ struct CollisionFilter::Implementation {
     {
     }
 
-    std::unordered_set<std::pair<EntityId, EntityId>> m_collisions;
+    std::unordered_set<Collision> m_collisions;
 
     std::string m_collisionGroup1;
     std::string m_collisionGroup2;
@@ -61,25 +36,25 @@ CollisionFilter::CollisionFilter(
 }
 
 
-std::unordered_set<std::pair<EntityId, EntityId>>&
+std::unordered_set<Collision>&
 CollisionFilter::collisions() {
     return m_impl->m_collisions;
 }
 
 void
 CollisionFilter::addCollision(
-    std::pair<EntityId, EntityId> collision
+    Collision collision
 ) {
     m_impl->m_collisions.insert(collision);
 }
 
-typename std::unordered_set<std::pair<EntityId, EntityId>>::const_iterator
+typename std::unordered_set<Collision>::const_iterator
 CollisionFilter::begin() const {
     return m_impl->m_collisions.cbegin();
 }
 
 
-typename std::unordered_set<std::pair<EntityId, EntityId>>::const_iterator
+typename std::unordered_set<Collision>::const_iterator
 CollisionFilter::end() const {
     return m_impl->m_collisions.cend();
 }
@@ -105,4 +80,3 @@ CollisionFilter::getCollisionSignature() const {
     return std::pair<const std::string&, const std::string&>(m_impl->m_collisionGroup1, m_impl->m_collisionGroup2);
 }
 
-} // namespace thrive
