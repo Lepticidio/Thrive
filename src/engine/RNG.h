@@ -15,7 +15,7 @@ namespace thrive {
 * Uses C++11 RNG features for optimal quality RNG.
 * Can be instantiated multiple times for multiple
 */
-class RNGManager final {
+class RNG final {
 
 public:
 
@@ -24,11 +24,11 @@ public:
     *
     * Exposes:
     *
-    * - RNGManager::rand(min, max)
-    * - RNGManager::rand()
-    * - RNGManager::generateRandomSeed()
-    * - RNGManager::setSeed(seed)
-    * - RNGManager::getSeed()
+    * - RNG::rand(min, max)
+    * - RNG::rand()
+    * - RNG::generateRandomSeed()
+    * - RNG::setSeed(seed)
+    * - RNG::getSeed()
     */
     static luabind::scope
     luaBindings();
@@ -36,7 +36,7 @@ public:
     /**
     * @brief Constructor using proper random seed
     */
-    RNGManager();
+    RNG();
 
     /**
     * @brief Constructor
@@ -44,7 +44,7 @@ public:
     * @param seed
     *   The seed used for initializing the RNG
     */
-    RNGManager(RNGSeed seed);
+    RNG(RNGSeed seed);
 
     /**
     * @brief Restarts the RNG with provided seed

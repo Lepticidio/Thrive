@@ -23,8 +23,8 @@ add_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/system.h
     ${CMAKE_CURRENT_SOURCE_DIR}/touchable.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/touchable.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/RNGManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RNGManager.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/RNG.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RNG.h
 )
 
 add_test_sources(

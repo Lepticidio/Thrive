@@ -1,8 +1,8 @@
-#include "RNGManager.h"
+#include "RNG.h"
 
 using namespace thrive;
 
-struct RNGManager::Implementation {
+struct RNG::Implementation {
     Implementation(
         RNGSeed seed
     ) : m_seed(seed)
@@ -18,26 +18,26 @@ struct RNGManager::Implementation {
 
 
 luabind::scope
-RNGManager::luaBindings(){
+RNG::luaBindings(){
     using namespace luabind;
-    return class_<RNGManager>("RNGManager")
+    return class_<RNG>("RNG")
         .def(constructor<>())
         .def(constructor<int>())
-   //     .def("rand", reinterpret_cast<int(RNGManager::*)(int, int)>(&RNGManager::rand)) //Looks like C casts are needed, but treated as error with compiler flag.
-    //    .def("rand", reinterpret_cast<double(RNGManager::*)()>(&RNGManager::rand))
-        .def("generateRandomSeed", &RNGManager::generateRandomSeed)
-        .def("setSeed", &RNGManager::setSeed)
-        .def("getSeed", &RNGManager::getSeed)
+   //     .def("rand", reinterpret_cast<int(RNG::*)(int, int)>(&RNG::rand)) //Looks like C casts are needed, but treated as error with compiler flag.
+    //    .def("rand", reinterpret_cast<double(RNG::*)()>(&RNG::rand))
+        .def("generateRandomSeed", &RNG::generateRandomSeed)
+        .def("setSeed", &RNG::setSeed)
+        .def("getSeed", &RNG::getSeed)
     ;
 }
 
-RNGManager::RNGManager() { //Cannot use constructor delegation or initialization lists because random_device object is needed.
+RNG::RNG() { //Cannot use constructor delegation or initialization lists because random_device object is needed.
     std::random_device rd;
     m_impl = new Implementation(rd());
 }
 
 
-RNGManager::RNGManager(
+RNG::RNG(
     RNGSeed seed
 ) : m_impl(new Implementation(seed))
 {
@@ -45,7 +45,7 @@ RNGManager::RNGManager(
 
 
 void
-RNGManager::setSeed(
+RNG::setSeed(
     RNGSeed seed
 ) {
     m_impl->m_seed = seed;
@@ -53,23 +53,23 @@ RNGManager::setSeed(
 }
 
 RNGSeed
-RNGManager::getSeed() const {
+RNG::getSeed() const {
     return m_impl->m_seed;
 }
 
 RNGSeed
-RNGManager::generateRandomSeed() {
+RNG::generateRandomSeed() {
     return m_impl->m_rd();
 }
 
 
 double
-RNGManager::getDouble() {
+RNG::getDouble() {
     return m_impl->m_realDist(m_impl->m_mt);
 }
 
 double
-RNGManager::getDoubleBetween(
+RNG::getDoubleBetween(
     double min,
     double max
 ) {
@@ -79,7 +79,7 @@ RNGManager::getDoubleBetween(
 
 
 int
-RNGManager::getIntBetween(
+RNG::getIntBetween(
     int min,
     int max
 ) {
