@@ -1,7 +1,11 @@
 #include "engine/rng.h"
 #include "engine/tests/test_component.h"
+
+#include <algorithm>
 #include <unordered_set>
 #include <set>
+#include <vector>
+
 #include <gtest/gtest.h>
 
 
@@ -50,4 +54,13 @@ TEST(RNG, setSeed) {
     RNG rng(1337);
     rng.setSeed(1234);
     EXPECT_EQ(1234, rng.getSeed());
+}
+
+TEST(RNG, shuffle) {
+    RNG rng();
+    std::vector<int> toShuffle {5, 12, 16, 18, 19, 25, 33, 41, 53, 69, 71, 87, 90};
+    rng.shuffle(toShuffle.begin(), toShuffle.end());
+    std::vector<int> toCompare {5, 12, 16, 18, 19, 25, 33, 41, 53, 69, 71, 87, 90};
+    auto pair = std::mismatch(toShuffle.begin(), toShuffle.end(), toCompare.rbegin());
+    EXPECT_TRUE(pair.first == toShuffle.end() && pair.second == toCompare.end());
 }

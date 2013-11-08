@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <random>
 #include <scripting/luabind.h>
+
 
 using RNGSeed = unsigned int;  // parts <random> uses unsigned int
 
@@ -45,6 +47,8 @@ public:
     *   The seed used for initializing the RNG
     */
     RNG(RNGSeed seed);
+
+    ~RNG();
 
     /**
     * @brief Restarts the RNG with provided seed
@@ -109,20 +113,23 @@ public:
     *
     * @return
     *  int in range [min, max] inclusive
-    *//*    //NOT SURE HOW TO MAKE THIS WORK (scope of Implementation definition and apparently std::shuffle doesn't exist???):
+    */
     template<typename iterType>
-    void shuffle(               //cannot be virtual
+    void shuffle(
         iterType first,
         iterType last
     ) {
-        std::shuffle(first, last, m_impl->m_mt);
-    }*/
+        std::shuffle(first, last, mersenneTwister());
+    }
 
 
 private:
 
+    std::mt19937&
+    mersenneTwister();
+
     struct Implementation;
-    Implementation* m_impl;
+    std::unique_ptr<Implementation> m_impl;
 
 };
 

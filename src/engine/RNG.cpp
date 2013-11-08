@@ -5,9 +5,14 @@ using namespace thrive;
 struct RNG::Implementation {
     Implementation(
         RNGSeed seed
-    ) : m_seed(seed)
+    ) : m_seed(seed),
+        m_mt(seed)
     {
-        m_mt = std::mt19937(seed);
+    }
+    Implementation()
+    {
+        m_seed = m_rd();
+        m_mt = std::mt19937(m_seed);
     }
 
     RNGSeed m_seed;
@@ -31,9 +36,9 @@ RNG::luaBindings(){
     ;
 }
 
-RNG::RNG() { //Cannot use constructor delegation or initialization lists because random_device object is needed.
-    std::random_device rd;
-    m_impl = new Implementation(rd());
+RNG::RNG()
+  : m_impl(new Implementation())
+{
 }
 
 
@@ -43,6 +48,7 @@ RNG::RNG(
 {
 }
 
+RNG::~RNG(){}
 
 void
 RNG::setSeed(
@@ -87,6 +93,10 @@ RNG::getIntBetween(
     return dis(m_impl->m_mt);
 }
 
-
+std::mt19937&
+RNG::mersenneTwister()
+{
+    return m_impl->m_mt;
+}
 
 
